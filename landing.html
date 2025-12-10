@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>James (Wolfe) Harrison</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            text-align: center;
+            max-width: 900px;
+            width: 100%;
+        }
+
+        h1 {
+            font-size: 3rem;
+            color: white;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            font-size: 1.25rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 4rem;
+        }
+
+        .paths {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .path-card {
+            background: white;
+            border-radius: 16px;
+            padding: 3rem 2rem;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .path-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .path-card h2 {
+            font-size: 1.75rem;
+            margin-bottom: 1rem;
+            color: #667eea;
+        }
+
+        .path-card p {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #666;
+        }
+
+        .icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .subtitle {
+                font-size: 1rem;
+            }
+
+            .paths {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>James (Wolfe) Harrison</h1>
+        <p class="subtitle">Format Standardization, AI Infrastructure, Software Engineering</p>
+
+        <div class="paths">
+            <a href="https://wolfejames-com.vercel.app/" class="path-card">
+                <div class="icon">🏎️</div>
+                <h2>Standards & Development</h2>
+                <p>IANA registration, IETF work, Anthropic MCP, professional credentials and standards body achievements.</p>
+            </a>
+
+            <a href="/projects.html" class="path-card">
+                <div class="icon">🛠️</div>
+                <h2>Projects & Portfolio</h2>
+                <p>Full project history, CAD-SIM, Hextra.io, complete development journey from 1994 to present.</p>
+            </a>
+        </div>
+    </div>
+</body>
+</html>
