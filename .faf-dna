@@ -1,0 +1,95 @@
+{
+  "birthCertificate": {
+    "born": "2025-12-10T17:03:24.379Z",
+    "birthDNA": 0,
+    "birthDNASource": "legacy",
+    "projectDNA": "5d715bf6494f3519",
+    "authenticated": false,
+    "certificate": "FAF-2025-WOLFEJAM-WOL9"
+  },
+  "versions": [
+    {
+      "version": "v1.0.0",
+      "timestamp": "2025-12-10T17:03:24.380Z",
+      "score": 0,
+      "changes": [
+        "Initial context from CLAUDE.md"
+      ],
+      "approved": false,
+      "growth": 0,
+      "growthRate": 0
+    },
+    {
+      "version": "v1.0.1",
+      "timestamp": "2025-12-10T17:03:24.419Z",
+      "score": 50,
+      "changes": [
+        "Initial .faf generation from project"
+      ],
+      "approved": false,
+      "growth": 50,
+      "growthRate": 50
+    }
+  ],
+  "current": {
+    "version": "v1.0.1",
+    "score": 50,
+    "approved": false,
+    "lastSync": "2025-12-10T17:03:24.419Z"
+  },
+  "recovery": {
+    "claudeMD": "/Users/wolfejam/wolfejames-com/CLAUDE.md",
+    "lastBackup": "2025-12-10T17:03:24.380Z",
+    "syncStatus": "active",
+    "autoRecover": true
+  },
+  "growth": {
+    "totalGrowth": 50,
+    "daysActive": 0,
+    "averageDailyGrowth": 50,
+    "bestDay": {
+      "date": "2025-12-10T17:03:24.420Z",
+      "growth": 50
+    },
+    "bestWeek": {
+      "start": "2025-12-10T17:03:24.380Z",
+      "growth": 0
+    },
+    "milestones": [
+      {
+        "type": "birth",
+        "score": 0,
+        "date": "2025-12-10T17:03:24.380Z",
+        "version": "v1.0.0",
+        "label": "Birth",
+        "emoji": "🐣"
+      },
+      {
+        "type": "doubled",
+        "score": 50,
+        "date": "2025-12-10T17:03:24.420Z",
+        "version": "v1.0.1",
+        "label": "Doubled",
+        "emoji": "2️⃣"
+      },
+      {
+        "type": "peak",
+        "score": 50,
+        "date": "2025-12-10T17:03:24.420Z",
+        "version": "v1.0.1",
+        "label": "Peak",
+        "emoji": "🏔️"
+      },
+      {
+        "type": "current",
+        "score": 50,
+        "date": "2025-12-10T17:03:24.420Z",
+        "version": "v1.0.1",
+        "label": "Current",
+        "emoji": "📍"
+      }
+    ]
+  },
+  "lastModified": "2025-12-10T17:03:24.420Z",
+  "format": "faf-dna-v1"
+}
