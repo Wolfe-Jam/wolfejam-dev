@@ -235,6 +235,34 @@
             }
         }
 
+        /* Brand Card - Always black */
+        .brand-card {
+            display: block;
+            max-width: 400px;
+            margin: 32px auto;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .brand-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .brand-card img {
+            display: block;
+            width: 100%;
+            height: auto;
+            border-radius: 12px;
+        }
+
+        @media (max-width: 480px) {
+            .brand-card {
+                max-width: 320px;
+            }
+        }
+
         /* Hero Section */
         .hero {
             padding: 120px 0 80px;
@@ -562,7 +590,12 @@
         <section class="hero">
             <div class="container">
                 <h1>James (Wolfe) Harrison</h1>
-                <p class="subtitle">Format Standardization, AI Infrastructure, Software Engineering & Development</p>
+                
+                <!-- Brand Card -->
+                <div class="brand-card">
+                    <img src="/brand-card.png" alt="Software Engineer & Format Architect - Creator of .FAF - Author of The 8 Eternal Cs">
+                </div>
+                
                 <p class="tagline">30 years designing formats that last. From Commodore Amiga to Internet AI standards, building technical infrastructure you can trust for the AI era.</p>
             </div>
         </section>
