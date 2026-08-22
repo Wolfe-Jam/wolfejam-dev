@@ -49,6 +49,11 @@
             "https://github.com/Wolfe-Jam",
             "https://orcid.org/0009-0007-0801-3841",
             "https://doi.org/10.5281/zenodo.18251362",
+            "https://doi.org/10.5281/zenodo.20348942",
+            "https://doi.org/10.5281/zenodo.21951641",
+            "https://datatracker.ietf.org/doc/draft-wolfe-faf-format/",
+            "https://datatracker.ietf.org/doc/draft-wolfe-faf-agent/",
+            "https://crates.io/crates/rust-faf-mcp",
             "https://faf.one"
         ],
         "knowsAbout": [
@@ -611,12 +616,16 @@
                 <h2>Standards Body Work</h2>
 
                 <div class="achievement" style="border-left: 4px solid #00D4D4;">
-                    <h3 style="color: #00D4D4;">IANA Media Type Registration</h3>
+                    <h3 style="color: #00D4D4;">IANA Media Type Registrations — 3</h3>
                     <p>
-                        Registered <code>application/vnd.faf+yaml</code> as an official Internet media type with IANA (Internet Assigned Numbers Authority).
-                        The .faf format is the first and only IANA-registered format with an official Anthropic MCP server.
+                        Registered three official Internet media types with IANA (Internet Assigned Numbers Authority) — the full FAF format family, each independently registered.
+                        The first, <code>application/vnd.faf+yaml</code>, is the first IANA-registered format with an official Anthropic MCP server.
                     </p>
-                    <p class="achievement-meta">October 31, 2025 • <a href="https://www.iana.org/assignments/media-types/application/vnd.faf+yaml" class="project-link" target="_blank" style="color: #00D4D4;">View Registration</a></p>
+                    <p class="achievement-meta">
+                        <a href="https://www.iana.org/assignments/media-types/application/vnd.faf+yaml" class="project-link" target="_blank" style="color: #00D4D4;">vnd.faf+yaml</a> (Context, Oct 2025) •
+                        <a href="https://www.iana.org/assignments/media-types/application/vnd.fafm+yaml" class="project-link" target="_blank" style="color: #00D4D4;">vnd.fafm+yaml</a> (Memory) •
+                        <a href="https://www.iana.org/assignments/media-types/application/vnd.fafa+yaml" class="project-link" target="_blank" style="color: #00D4D4;">vnd.fafa+yaml</a> (Agent identity)
+                    </p>
                 </div>
 
                 <div class="achievement">
@@ -628,13 +637,29 @@
                     <p class="achievement-meta">November 2025 • Active participation in vocabulary standardization</p>
                 </div>
 
-                <div class="achievement" style="border-left: 4px solid #FF6B35;">
-                    <h3 style="color: #FF6B35;">CERN/Zenodo White Paper (DOI)</h3>
+                <div class="achievement">
+                    <h3>IETF Internet-Drafts (Datatracker)</h3>
                     <p>
-                        Published "Format-Driven AI Context Architecture: The .faf Standard for Persistent Project Understanding" on Zenodo (CERN).
-                        Peer-citable academic preprint with DOI. 272 views, 117 downloads.
+                        Two Internet-Drafts filed on the IETF Datatracker: the foundational .faf/.fafm context and memory format specification,
+                        and a follow-on draft defining .fafa — a portable identity format for AI agents.
                     </p>
-                    <p class="achievement-meta">January 15, 2026 • <a href="https://doi.org/10.5281/zenodo.18251362" class="project-link" target="_blank" style="color: #FF6B35;">DOI: 10.5281/zenodo.18251362</a></p>
+                    <p class="achievement-meta">
+                        <a href="https://datatracker.ietf.org/doc/draft-wolfe-faf-format/" class="project-link" target="_blank">draft-wolfe-faf-format</a> •
+                        <a href="https://datatracker.ietf.org/doc/draft-wolfe-faf-agent/" class="project-link" target="_blank">draft-wolfe-faf-agent-01</a>
+                    </p>
+                </div>
+
+                <div class="achievement" style="border-left: 4px solid #FF6B35;">
+                    <h3 style="color: #FF6B35;">CERN/Zenodo White Papers — 3</h3>
+                    <p>
+                        Three peer-citable academic preprints on Zenodo (CERN), each with its own DOI, covering the full FAF format family:
+                        context, memory, and agent identity.
+                    </p>
+                    <p class="achievement-meta">
+                        <a href="https://doi.org/10.5281/zenodo.18251362" class="project-link" target="_blank" style="color: #FF6B35;">.faf — Format-Driven AI Context Architecture</a><br>
+                        <a href="https://doi.org/10.5281/zenodo.20348942" class="project-link" target="_blank" style="color: #FF6B35;">.fafm — Permanent Memory and Instant Recall</a><br>
+                        <a href="https://doi.org/10.5281/zenodo.21951641" class="project-link" target="_blank" style="color: #FF6B35;">.fafa — Why Agents Need a Passport</a>
+                    </p>
                 </div>
 
                 <div class="achievement">
@@ -674,9 +699,9 @@
                         Google-approved (Chrome extension), and in production use across thousands of projects.
                     </p>
                     <p>
-                        <strong>Downloads:</strong> 50,000+ across npm, PyPI, and crates.io<br>
-                        <strong>White Paper:</strong> Published on Zenodo (CERN) with DOI<br>
-                        <strong>MCP Servers:</strong> 5 servers across Claude, Grok, and Gemini<br>
+                        <strong>Downloads:</strong> 120,000+ across npm, PyPI, and crates.io<br>
+                        <strong>White Papers:</strong> 3 published on Zenodo (CERN), each with its own DOI<br>
+                        <strong>MCP Servers:</strong> 5 servers across Claude, Grok, Gemini, and native Rust<br>
                         <strong>Compilers:</strong> TypeScript, Rust (native + WASM), Zig (2.7KB WASM)
                     </p>
                     <a href="https://faf.one" class="project-link" target="_blank">Visit faf.one →</a>
@@ -697,8 +722,8 @@
                         <strong>Published:</strong> December 8, 2025<br>
                         <strong>Status:</strong> Theoretical framework underlying .faf architecture
                     </p>
-                    <a href="https://fafdev.tools/8cs" class="project-link" target="_blank" style="color: #FF6B35;">Interactive Overview →</a>
-                    <a href="https://fafdev.tools/8-eternal-cs" class="project-link" target="_blank" style="color: #FF6B35; margin-left: 16px;">Read the Paper →</a>
+                    <a href="https://devtools.faf.one/8cs" class="project-link" target="_blank" style="color: #FF6B35;">Interactive Overview →</a>
+                    <a href="https://devtools.faf.one/8-eternal-cs" class="project-link" target="_blank" style="color: #FF6B35; margin-left: 16px;">Read the Paper →</a>
                 </div>
 
                 <div class="project-card">
@@ -709,18 +734,20 @@
                         Expanded to 5 MCP servers across 3 AI platforms.
                     </p>
                     <p>
-                        <strong>claude-faf-mcp:</strong> Official Anthropic MCP server, 12,000+ downloads, Desktop Extension (.mcpb)<br>
-                        <strong>faf-cli:</strong> Universal CLI, 24,000+ downloads (npm + Homebrew)<br>
+                        <strong>claude-faf-mcp:</strong> Official Anthropic MCP server, Desktop Extension (.mcpb)<br>
+                        <strong>faf-cli:</strong> Universal CLI (npm + Homebrew)<br>
                         <strong>grok-faf-mcp:</strong> xAI Grok integration (npm)<br>
-                        <strong>gemini-faf-mcp:</strong> Google Gemini integration (PyPI)
+                        <strong>gemini-faf-mcp:</strong> Google Gemini integration (PyPI)<br>
+                        <strong>rust-faf-mcp / faf-rust-sdk:</strong> Native Rust MCP server + SDK (crates.io)
                     </p>
                     <p>
                         <strong>Status:</strong> Production on 3 registries (npm, PyPI, crates.io)<br>
-                        <strong>Total Ecosystem Downloads:</strong> 50,000+<br>
-                        <strong>Architecture:</strong> stdio transport, 33 tools, Desktop Extension (.mcpb)
+                        <strong>Total Ecosystem Downloads:</strong> 120,000+<br>
+                        <strong>Architecture:</strong> stdio transport, Desktop Extension (.mcpb), native Rust + WASM compile targets
                     </p>
                     <a href="https://faf.one/downloads" class="project-link" target="_blank">All Downloads →</a>
                     <a href="https://github.com/Wolfe-Jam/claude-faf-mcp" class="project-link" target="_blank" style="margin-left: 12px;">View on GitHub →</a>
+                    <a href="https://crates.io/crates/rust-faf-mcp" class="project-link" target="_blank" style="margin-left: 12px;">View on crates.io →</a>
                 </div>
 
                 <div class="project-card">
@@ -769,7 +796,7 @@
                     <a href="https://orcid.org/0009-0007-0801-3841" class="contact-link" target="_blank">ORCID</a>
                     <a href="https://doi.org/10.5281/zenodo.18251362" class="contact-link" target="_blank">Zenodo/CERN</a>
                     <a href="https://faf.one" class="contact-link" target="_blank">faf.one</a>
-                    <a href="https://fafdev.tools/8cs" class="contact-link contact-link--accent" target="_blank">The 8 C's</a>
+                    <a href="https://devtools.faf.one/8cs" class="contact-link contact-link--accent" target="_blank">The 8 C's</a>
                 </div>
             </div>
         </section>

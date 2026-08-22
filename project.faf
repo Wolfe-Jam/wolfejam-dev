@@ -55,7 +55,7 @@ stack:
   backend: None
   runtime: None
   database: None
-  build: None
+  build: Direct HTML (no build step)
   package_manager: npm
   api_type: REST
   hosting: None
@@ -88,12 +88,12 @@ tags:
     - open-source
   user_defined: null
 human_context:
-  who: Development teams
-  what: Software development solution
-  why: Improve development efficiency
-  where: Cloud platform
-  when: Ongoing development
-  how: Modern development practices
+  who: James Wolfe - software engineer, FAF creator, F1-inspired methodology advocate
+  what: Personal portfolio showcasing projects, writing, and the 8 Eternal C's framework
+  why: Professional presence, project showcase, and publishing original computing theory
+  where: Vercel static hosting at wolfejames.com
+  when: Ongoing - updated as new projects and ideas emerge
+  how: Pure HTML/CSS/JS, git push to Vercel, no build step
   additional_context: null
   context_score: 0
   total_prd_score: 40
