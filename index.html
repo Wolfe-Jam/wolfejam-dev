@@ -132,6 +132,18 @@
             align-items: center;
         }
 
+        .nav-worth-it {
+            font-size: 26px;
+            line-height: 1;
+            text-decoration: none;
+            transition: transform 0.2s ease;
+        }
+
+        .nav-worth-it:hover,
+        .nav-worth-it:focus-visible {
+            transform: scale(1.12);
+        }
+
         .logo {
             font-size: 24px;
             font-weight: 700;
@@ -401,6 +413,7 @@
         /* The Worth-It Service */
         .worth-it {
             padding: 80px 0;
+            scroll-margin-top: 72px; /* clear the sticky header when jumping to #worth-it */
         }
 
         .worth-it h2 {
@@ -660,6 +673,7 @@
     <header>
         <nav class="container">
             <a href="#" class="logo">🏎️✨ wolfejam.dev</a>
+            <a href="#worth-it" class="nav-worth-it" title="Worth-It Service" aria-label="Worth-It Service">🧰</a>
         </nav>
     </header>
 
@@ -944,7 +958,7 @@
 
     <footer>
         <div class="container">
-            <p>&copy; 2026 Wolfe James LLC. <a href="https://www.iana.org/assignments/media-types/application/vnd.faf+yaml" target="_blank" rel="noopener noreferrer" style="color: var(--text-primary); text-decoration: underline;">3x IANA-registered .FAF family creator</a> | AAIF Ambassador</p>
+            <p>&copy; 2026 Wolfe James LLC. <a href="https://faf.one/links#iana" target="_blank" rel="noopener noreferrer" style="color: var(--text-primary); text-decoration: underline;">3x IANA-registered .FAF family creator</a> | AAIF Ambassador</p>
         </div>
     </footer>
 
