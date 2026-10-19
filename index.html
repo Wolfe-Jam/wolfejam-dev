@@ -398,6 +398,71 @@
             color: var(--accent-hover);
         }
 
+        /* The Worth-It Service */
+        .worth-it {
+            padding: 80px 0;
+        }
+
+        .worth-it h2 {
+            text-align: center;
+            font-size: 36px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .worth-it .lede {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 18px;
+            line-height: 1.6;
+            margin: 0 auto 48px;
+            max-width: 640px;
+        }
+
+        .offers {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        .offers .project-card {
+            margin-bottom: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .offers .project-card p {
+            flex: 1;
+        }
+
+        .offer-price {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .offer-price small {
+            font-size: 14px;
+            font-weight: 400;
+            color: var(--text-secondary);
+        }
+
+        .offer-cta {
+            background: none;
+            border: 0;
+            padding: 0;
+            font: inherit;
+            cursor: pointer;
+            text-align: left;
+        }
+
+        .worth-it .close {
+            text-align: center;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            margin-top: 40px;
+        }
+
         /* Contact Section */
         .contact {
             background: var(--bg-secondary);
@@ -800,6 +865,52 @@
             </div>
         </section>
 
+        <section class="worth-it" id="worth-it">
+            <div class="container">
+                <h2>The Worth-It Service</h2>
+                <p class="lede">Health checks, fixes and upkeep for MCP servers. Why? Because your server's worth it. Large or small, you're a human with a server.</p>
+
+                <div class="offers">
+                    <div class="project-card">
+                        <h3>Free Report</h3>
+                        <div class="offer-price">$0</div>
+                        <p>Point it at your server and get a grade. What's wrong, with the spec line for each one. Most of the tools behind it are open source.</p>
+                        <a href="https://testing.faf.one" class="project-link" target="_blank" rel="noopener">Get your Free Report →</a>
+                    </div>
+
+                    <div class="project-card">
+                        <h3>Fix It</h3>
+                        <div class="offer-price">from $500 <small>one-off</small></div>
+                        <p>I fix what your report found, then run it again so you can see the after.</p>
+                        <button class="project-link offer-cta" data-offer="Fix It">Ask about a fix →</button>
+                    </div>
+
+                    <div class="project-card">
+                        <h3>Worth-It Monthly</h3>
+                        <div class="offer-price">$149 <small>/month, founding price</small></div>
+                        <p>The check every month, compared with last month, read by me, with small fixes included. You know it stayed fixed.</p>
+                        <button class="project-link offer-cta" data-offer="Worth-It Monthly">Start monthly checks →</button>
+                    </div>
+
+                    <div class="project-card">
+                        <h3>Setup</h3>
+                        <div class="offer-price">from $1,500</div>
+                        <p>A new MCP server, or your team's whole MCP setup, built to the spec and passing the check.</p>
+                        <button class="project-link offer-cta" data-offer="Setup">Talk about a setup →</button>
+                    </div>
+
+                    <div class="project-card">
+                        <h3>Retainer</h3>
+                        <div class="offer-price">from $400 <small>/month, founding price</small></div>
+                        <p>Upkeep, upgrades when the spec moves, and priority fixes. Founding prices stay while you do.</p>
+                        <button class="project-link offer-cta" data-offer="Retainer">Talk about a retainer →</button>
+                    </div>
+                </div>
+
+                <p class="close">If it's worth it to you, hire me. If not, DIY it. I don't mind either way.<br>If you get stuck, ask.</p>
+            </div>
+        </section>
+
         <section class="contact">
             <div class="container">
                 <h2>Contact & Credentials</h2>
@@ -889,6 +1000,14 @@
         });
 
         // Handle form submission
+        // The Worth-It Service: each paid offer opens the contact form, pre-filled.
+        document.querySelectorAll('.offer-cta').forEach((btn) => {
+            btn.addEventListener('click', () => {
+                contactForm.querySelector('textarea[name="message"]').value = `The Worth-It Service: ${btn.dataset.offer}. My server: `;
+                modal.classList.add('active');
+            });
+        });
+
         contactForm.addEventListener('submit', (e) => {
             e.preventDefault();
 
