@@ -144,6 +144,40 @@
             transform: scale(1.12);
         }
 
+        /* Fast tooltip (the native title tooltip waits ~1 s and can't be changed). */
+        .nav-worth-it {
+            position: relative;
+        }
+
+        .nav-worth-it::after {
+            content: attr(data-tip);
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 0;
+            padding: 6px 10px;
+            border-radius: 6px;
+            background: var(--text-primary);
+            color: var(--bg-primary);
+            font-size: 13px;
+            font-weight: 600;
+            white-space: nowrap;
+            opacity: 0;
+            transform: translateY(-4px) scale(0.89);
+            transform-origin: top right;
+            pointer-events: none;
+            transition: opacity 0.12s ease, transform 0.12s ease;
+        }
+
+        .nav-worth-it:hover::after,
+        .nav-worth-it:focus-visible::after {
+            opacity: 1;
+            transform: translateY(0) scale(0.89);
+        }
+
+        @media (hover: none) {
+            .nav-worth-it::after { display: none; }
+        }
+
         .logo {
             font-size: 24px;
             font-weight: 700;
@@ -673,7 +707,7 @@
     <header>
         <nav class="container">
             <a href="#" class="logo">🏎️✨ wolfejam.dev</a>
-            <a href="#worth-it" class="nav-worth-it" title="Worth-It Service" aria-label="Worth-It Service">🧰</a>
+            <a href="#worth-it" class="nav-worth-it" data-tip="Worth-It Service" aria-label="Worth-It Service">🧰</a>
         </nav>
     </header>
 
