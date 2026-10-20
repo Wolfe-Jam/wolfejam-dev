@@ -132,6 +132,81 @@
             align-items: center;
         }
 
+        .nav-worth-it {
+            font-size: 26px;
+            line-height: 1;
+            text-decoration: none;
+            transition: transform 0.2s ease;
+        }
+
+        .nav-worth-it:hover,
+        .nav-worth-it:focus-visible {
+            transform: scale(1.12);
+        }
+
+        /* Fast tooltip (the native title tooltip waits ~1 s and can't be changed). */
+        .nav-worth-it {
+            position: relative;
+        }
+
+        .logo {
+            position: relative;
+        }
+
+        .logo::after {
+            content: attr(data-tip);
+            position: absolute;
+            top: calc(100% + 10px);
+            left: 0;
+            padding: 6px 10px;
+            border-radius: 6px;
+            background: var(--text-primary);
+            color: var(--bg-primary);
+            font-size: 13px;
+            font-weight: 600;
+            white-space: nowrap;
+            opacity: 0;
+            transform: translateY(-4px);
+            pointer-events: none;
+            transition: opacity 0.12s ease, transform 0.12s ease;
+        }
+
+        .logo:hover::after,
+        .logo:focus-visible::after {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .nav-worth-it::after {
+            content: attr(data-tip);
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 0;
+            padding: 6px 10px;
+            border-radius: 6px;
+            background: var(--text-primary);
+            color: var(--bg-primary);
+            font-size: 13px;
+            font-weight: 600;
+            white-space: nowrap;
+            opacity: 0;
+            transform: translateY(-4px) scale(0.89);
+            transform-origin: top right;
+            pointer-events: none;
+            transition: opacity 0.12s ease, transform 0.12s ease;
+        }
+
+        .nav-worth-it:hover::after,
+        .nav-worth-it:focus-visible::after {
+            opacity: 1;
+            transform: translateY(0) scale(0.89);
+        }
+
+        @media (hover: none) {
+            .nav-worth-it::after,
+            .logo::after { display: none; }
+        }
+
         .logo {
             font-size: 24px;
             font-weight: 700;
@@ -224,7 +299,16 @@
             border-top: 4px solid #fffccc;
         }
 
+        /* Glide to #worth-it and back to the top ("Home James") */
+        html {
+            scroll-behavior: smooth;
+        }
+
         @media (prefers-reduced-motion: reduce) {
+            html {
+                scroll-behavior: auto;
+            }
+
             .wolfejam-gizmo,
             .wolfejam-gizmo * {
                 animation-duration: 0.01ms !important;
@@ -396,6 +480,72 @@
 
         .project-link:hover {
             color: var(--accent-hover);
+        }
+
+        /* The Worth-It Service */
+        .worth-it {
+            padding: 80px 0;
+            scroll-margin-top: 72px; /* clear the sticky header when jumping to #worth-it */
+        }
+
+        .worth-it h2 {
+            text-align: center;
+            font-size: 36px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .worth-it .lede {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 18px;
+            line-height: 1.6;
+            margin: 0 auto 48px;
+            max-width: 640px;
+        }
+
+        .offers {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        .offers .project-card {
+            margin-bottom: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .offers .project-card p {
+            flex: 1;
+        }
+
+        .offer-price {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .offer-price small {
+            font-size: 14px;
+            font-weight: 400;
+            color: var(--text-secondary);
+        }
+
+        .offer-cta {
+            background: none;
+            border: 0;
+            padding: 0;
+            font: inherit;
+            cursor: pointer;
+            text-align: left;
+        }
+
+        .worth-it .close {
+            text-align: center;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            margin-top: 40px;
         }
 
         /* Contact Section */
@@ -594,7 +744,8 @@
 
     <header>
         <nav class="container">
-            <a href="#" class="logo">🏎️✨ wolfejam.dev</a>
+            <a href="#" class="logo" data-tip="Home James">🏎️✨ wolfejam.dev</a>
+            <a href="#worth-it" class="nav-worth-it" data-tip="Worth-It Service" aria-label="Worth-It Service">🧰</a>
         </nav>
     </header>
 
@@ -605,7 +756,7 @@
                 
                 <!-- Brand Card -->
                 <div class="brand-card">
-                    <img src="/brand-card.png" alt="Software Engineer & Format Architect - Creator of .FAF - Author of The 8 Eternal Cs">
+                    <img src="/brand-card.png" width="400" height="300" alt="Software Engineer & Format Architect - AAIF Ambassador - 3x IANA Registered - Creator of .FAF - Author of The 8 Eternal Cs">
                 </div>
                 
                 <p class="tagline">30 years designing formats that last. From Commodore Amiga to Internet AI standards, building technical infrastructure you can trust for the AI era.</p>
@@ -800,6 +951,53 @@
             </div>
         </section>
 
+        <section class="worth-it" id="worth-it">
+            <div class="container">
+                <h2>The Worth-It Service</h2>
+                <p class="lede">Health checks, fixes and upkeep for MCP servers.<br>Why? Because your server's worth it.<br>Large or small, you're a human with a server.</p>
+
+                <div class="offers">
+                    <div class="project-card">
+                        <h3>Free Report</h3>
+                        <div class="offer-price">$0</div>
+                        <p>Point it at your server and get a grade. What's wrong, with the spec line for each one. Most of the tools behind it are open source.</p>
+                        <a href="https://testing.faf.one" class="project-link" target="_blank" rel="noopener">Get your Free Report →</a>
+                    </div>
+
+                    <div class="project-card">
+                        <h3>Fix It</h3>
+                        <div class="offer-price">from $500 <small>one-off</small></div>
+                        <p>I fix what your report found, then run it again so you can see the after.</p>
+                        <button class="project-link offer-cta" data-offer="Fix It">Ask about a fix →</button>
+                    </div>
+
+                    <div class="project-card">
+                        <h3>Worth-It Monthly</h3>
+                        <div class="offer-price">$149 <small>/month per server, founding price</small></div>
+                        <p>The check every month, compared with last month, read by me, with small fixes included. You know it stayed fixed.</p>
+                        <button class="project-link offer-cta" data-offer="Worth-It Monthly">Start monthly checks →</button>
+                    </div>
+
+                    <div class="project-card">
+                        <h3>Setup</h3>
+                        <div class="offer-price">from $1,500</div>
+                        <p>A new MCP server, or your team's whole MCP setup, built to the spec and passing the check.</p>
+                        <button class="project-link offer-cta" data-offer="Setup">Talk about a setup →</button>
+                    </div>
+
+                    <div class="project-card">
+                        <h3>Maintenance</h3>
+                        <div class="offer-price">$400 <small>/month per server, founding price</small></div>
+                        <p>Up to 1 hour a week (4 hours a month) of upkeep, upgrades when the spec moves, and priority fixes. That's $100 an hour on the maintenance plan rate, against my standard $220. Founding prices stay while you do.</p>
+                        <button class="project-link offer-cta" data-offer="Maintenance">Talk about maintenance →</button>
+                    </div>
+                </div>
+
+                <p class="close"><strong>Who tracks your MCP servers, keeps them on spec, and pays when they drift?</strong></p>
+                <p class="close">If it's worth it to you, hire me. If not, DIY it. I don't mind either way.<br>If you get stuck, ask.</p>
+            </div>
+        </section>
+
         <section class="contact">
             <div class="container">
                 <h2>Contact & Credentials</h2>
@@ -833,7 +1031,7 @@
 
     <footer>
         <div class="container">
-            <p>&copy; 2026 Wolfe James LLC. <a href="https://www.iana.org/assignments/media-types/application/vnd.faf+yaml" target="_blank" rel="noopener noreferrer" style="color: var(--text-primary); text-decoration: underline;">IANA-registered format creator</a>. <a href="https://www.npmjs.com/package/claude-faf-mcp" target="_blank" rel="noopener noreferrer" style="color: var(--text-primary); text-decoration: underline;">Official Anthropic MCP server maintainer</a>.</p>
+            <p>&copy; 2026 Wolfe James LLC. <a href="https://faf.one/links#iana" target="_blank" rel="noopener noreferrer" style="color: var(--text-primary); text-decoration: underline;">3x IANA-registered .FAF family creator</a> | AAIF Ambassador</p>
         </div>
     </footer>
 
@@ -889,6 +1087,14 @@
         });
 
         // Handle form submission
+        // The Worth-It Service: each paid offer opens the contact form, pre-filled.
+        document.querySelectorAll('.offer-cta').forEach((btn) => {
+            btn.addEventListener('click', () => {
+                contactForm.querySelector('textarea[name="message"]').value = `The Worth-It Service: ${btn.dataset.offer}. My server: `;
+                modal.classList.add('active');
+            });
+        });
+
         contactForm.addEventListener('submit', (e) => {
             e.preventDefault();
 
