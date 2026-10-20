@@ -299,7 +299,16 @@
             border-top: 4px solid #fffccc;
         }
 
+        /* Glide to #worth-it and back to the top ("Home James") */
+        html {
+            scroll-behavior: smooth;
+        }
+
         @media (prefers-reduced-motion: reduce) {
+            html {
+                scroll-behavior: auto;
+            }
+
             .wolfejam-gizmo,
             .wolfejam-gizmo * {
                 animation-duration: 0.01ms !important;
