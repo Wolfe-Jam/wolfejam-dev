@@ -149,6 +149,34 @@
             position: relative;
         }
 
+        .logo {
+            position: relative;
+        }
+
+        .logo::after {
+            content: attr(data-tip);
+            position: absolute;
+            top: calc(100% + 10px);
+            left: 0;
+            padding: 6px 10px;
+            border-radius: 6px;
+            background: var(--text-primary);
+            color: var(--bg-primary);
+            font-size: 13px;
+            font-weight: 600;
+            white-space: nowrap;
+            opacity: 0;
+            transform: translateY(-4px);
+            pointer-events: none;
+            transition: opacity 0.12s ease, transform 0.12s ease;
+        }
+
+        .logo:hover::after,
+        .logo:focus-visible::after {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
         .nav-worth-it::after {
             content: attr(data-tip);
             position: absolute;
@@ -175,7 +203,8 @@
         }
 
         @media (hover: none) {
-            .nav-worth-it::after { display: none; }
+            .nav-worth-it::after,
+            .logo::after { display: none; }
         }
 
         .logo {
@@ -706,7 +735,7 @@
 
     <header>
         <nav class="container">
-            <a href="#" class="logo">🏎️✨ wolfejam.dev</a>
+            <a href="#" class="logo" data-tip="Home James">🏎️✨ wolfejam.dev</a>
             <a href="#worth-it" class="nav-worth-it" data-tip="Worth-It Service" aria-label="Worth-It Service">🧰</a>
         </nav>
     </header>
