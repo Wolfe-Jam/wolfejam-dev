@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Shipped — WOLFE ∞ JAMES</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="apple-touch-icon" href="/favicon.png">
+    <meta name="description" content="Open-standards work shipped each week: MCP and AI Catalog tooling, conformance proposals, and contributions to AAIF projects.">
+    <meta name="author" content="James (Wolfe) Harrison">
+    <link rel="canonical" href="https://wolfejam.dev/shipped">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://wolfejam.dev/shipped">
+    <meta property="og:title" content="Shipped — WOLFE ∞ JAMES">
+    <meta property="og:description" content="Open-standards work shipped each week: MCP and AI Catalog tooling, conformance proposals, and contributions to AAIF projects.">
+    <meta property="og:image" content="https://wolfejam.dev/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <script>
+        // Same theme key as the home page, set before paint.
+        try { document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light'); } catch (e) {}
+    </script>
+    <style>
+        :root {
+            --bg-primary: #fefcf8;
+            --bg-secondary: #f9f6f1;
+            --text-primary: #1a1a1a;
+            --text-secondary: #4a4a4a;
+            --text-muted: #7a7a7a;
+            --accent: #FF6B35;
+            --accent-hover: #e55a2b;
+            --border: #e5e5e5;
+            --code-bg: #f5f5f5;
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #0f0f0f;
+            --bg-secondary: #1a1a1a;
+            --text-primary: #f5f5f5;
+            --text-secondary: #d0d0d0;
+            --text-muted: #a0a0a0;
+            --accent: #FF6B35;
+            --accent-hover: #ff8a5c;
+            --border: #333333;
+            --code-bg: #262626;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background: var(--bg-primary);
+        }
+
+        .container { max-width: 760px; margin: 0 auto; padding: 0 24px; }
+
+        header { padding: 24px 0; border-bottom: 1px solid var(--border); }
+        nav { display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-weight: 700; color: var(--text-primary); text-decoration: none; }
+        .nav-worth-it { font-size: 26px; line-height: 1; text-decoration: none; }
+
+        main { padding: 48px 0 64px; }
+        h1 { font-size: 2rem; letter-spacing: 0.02em; }
+        .intro { color: var(--text-secondary); margin-top: 8px; }
+
+        .week { margin-top: 48px; padding-top: 32px; border-top: 1px solid var(--border); }
+        .week h2 { font-size: 1.35rem; }
+        .week h2 a { color: inherit; text-decoration: none; }
+        .week .range { color: var(--text-muted); font-size: 0.95rem; }
+        .week h3 { font-size: 1rem; margin: 24px 0 8px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-secondary); }
+        .week ul { list-style: none; }
+        .week li { padding: 10px 0 10px 16px; border-left: 3px solid var(--accent); margin-bottom: 10px; background: var(--bg-secondary); border-radius: 0 6px 6px 0; padding-right: 12px; }
+        .week li strong { color: var(--text-primary); }
+        .week li .sub { display: block; color: var(--text-secondary); font-size: 0.95rem; margin-top: 2px; }
+
+        a { color: var(--accent); }
+        a:hover { color: var(--accent-hover); }
+        code { background: var(--code-bg); color: var(--text-primary); padding: 1px 6px; border-radius: 4px; font-size: 0.9em; word-break: break-all; }
+
+        .door { margin-top: 56px; padding: 20px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-secondary); }
+        .door p { color: var(--text-secondary); }
+        .credit { margin-top: 24px; color: var(--text-muted); font-size: 0.85rem; }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="container">
+            <a href="/" class="logo">🏎️✨ wolfejam.dev</a>
+            <a href="/#worth-it" class="nav-worth-it" aria-label="Worth-It Service">🧰</a>
+        </nav>
+    </header>
+
+    <main class="container">
+        <h1>Shipped</h1>
+        <p class="intro">Open-standards work, each week: MCP and AI Catalog tooling, conformance proposals, and contributions to AAIF projects. Newest first.</p>
+
+        <!-- New week: copy this section to the top, Friday to Thursday. -->
+        <section class="week" id="2026-10-23">
+            <h2><a href="#2026-10-23">Oct 23, 2026</a></h2>
+            <p class="range">Fri Oct 16 – Thu Oct 22</p>
+
+            <h3>Released</h3>
+            <ul>
+                <li>
+                    <strong>mcp-server-card-check v0.4.1 · v0.4.0 · v0.3.4</strong>
+                    <span class="sub">v0.4.1: Catalog checks re-read against the AI Catalog spec, after an independent review. Verdicts change.</span>
+                    <span class="sub">v0.4.0: A browser entry, for extensions and Workers. No verdict changes.</span>
+                    <span class="sub">v0.3.4: Width suite, parts 3 and 4: comparing versions on live endpoints, and parity (no parity bug found; the tests keep it that way).</span>
+                    <span class="sub"><code>npx mcp-server-card-check@0.4.1 &lt;mcp-url&gt;</code> · <a href="https://servercard.wolfejam.dev">in the browser</a> · <a href="https://github.com/Wolfe-Jam/mcp-server-card-check/releases/tag/v0.4.1">notes</a></span>
+                </li>
+            </ul>
+
+            <h3>Contributed</h3>
+            <ul>
+                <li>
+                    <strong>MCP conformance #550: Server Card scenario (SEP-2127)</strong>
+                    <span class="sub">A correction to the proposed CORS checks, from running them against live servers.</span>
+                    <span class="sub"><a href="https://github.com/modelcontextprotocol/conformance/issues/550#issuecomment-6207013439">Read it</a></span>
+                </li>
+                <li>
+                    <strong>goose #12945: bring .goosehints in line with the repo and AGENTS.md</strong>
+                    <span class="sub">Docs PR, open for review.</span>
+                    <span class="sub"><a href="https://github.com/aaif-goose/goose/pull/12945">Read it</a></span>
+                </li>
+            </ul>
+        </section>
+
+        <section class="door">
+            <p>Want your own MCP server checked like this, and kept healthy? <a href="/#worth-it">The Worth-It Service</a> starts with a free report.</p>
+        </section>
+
+        <p class="credit">— Drafted by Claude · Approved by James Wolfe</p>
+    </main>
+</body>
+</html>
