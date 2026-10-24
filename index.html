@@ -132,6 +132,29 @@
             align-items: center;
         }
 
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-sep {
+            color: var(--text-muted);
+            font-size: 15px;
+        }
+
+        .nav-shipped {
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: 15px;
+            text-decoration: none;
+        }
+
+        .nav-shipped:hover,
+        .nav-shipped:focus-visible {
+            color: var(--accent);
+        }
+
         .nav-worth-it {
             font-size: 26px;
             line-height: 1;
@@ -745,7 +768,11 @@
     <header>
         <nav class="container">
             <a href="#" class="logo" data-tip="Home James">🏎️✨ wolfejam.dev</a>
-            <a href="#worth-it" class="nav-worth-it" data-tip="Worth-It Service" aria-label="Worth-It Service">🧰</a>
+            <div class="nav-right">
+                <a href="/shipped" class="nav-shipped">Shipped</a>
+                <span class="nav-sep" aria-hidden="true">|</span>
+                <a href="#worth-it" class="nav-worth-it" data-tip="Worth-It Service" aria-label="Worth-It Service">🧰</a>
+            </div>
         </nav>
     </header>
 
