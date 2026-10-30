@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>An MCP Story about Rust — WOLFE ∞ JAMES</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="apple-touch-icon" href="/favicon.png">
+    <meta name="description" content="From a missing package type to 105 Rust servers in the official MCP Registry in 108 days: the hole, the offer, the work, the merge, and what came after.">
+    <meta name="author" content="James (Wolfe) Harrison">
+    <link rel="canonical" href="https://wolfejam.dev/blog/rust-mcp-story">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://wolfejam.dev/blog/rust-mcp-story">
+    <meta property="og:title" content="An MCP Story about Rust — WOLFE ∞ JAMES">
+    <meta property="og:description" content="From a missing package type to 105 Rust servers in the official MCP Registry in 108 days: the hole, the offer, the work, the merge, and what came after.">
+    <meta property="og:image" content="https://wolfejam.dev/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <script>
+        // Same theme key as the home page, set before paint.
+        try { document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light'); } catch (e) {}
+    </script>
+    <style>
+        :root {
+            --bg-primary: #fefcf8;
+            --bg-secondary: #f9f6f1;
+            --text-primary: #1a1a1a;
+            --text-secondary: #4a4a4a;
+            --text-muted: #7a7a7a;
+            --accent: #FF6B35;
+            --accent-hover: #e55a2b;
+            --border: #e5e5e5;
+            --code-bg: #f5f5f5;
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #0f0f0f;
+            --bg-secondary: #1a1a1a;
+            --text-primary: #f5f5f5;
+            --text-secondary: #d0d0d0;
+            --text-muted: #a0a0a0;
+            --accent: #FF6B35;
+            --accent-hover: #ff8a5c;
+            --border: #333333;
+            --code-bg: #262626;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background: var(--bg-primary);
+        }
+
+        .container { max-width: 760px; margin: 0 auto; padding: 0 24px; }
+
+        header { padding: 24px 0; border-bottom: 1px solid var(--border); }
+        nav { display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-weight: 700; color: var(--text-primary); text-decoration: none; }
+        .nav-worth-it { font-size: 26px; line-height: 1; text-decoration: none; }
+
+        main { padding: 48px 0 64px; }
+        h1 { font-size: 2rem; letter-spacing: 0.02em; }
+        .intro { color: var(--text-secondary); margin-top: 8px; }
+
+        .week { margin-top: 48px; padding-top: 32px; border-top: 1px solid var(--border); }
+        .week h2 { font-size: 1.35rem; }
+        .week h2 a { color: inherit; text-decoration: none; }
+        .week .range { color: var(--text-muted); font-size: 0.95rem; }
+        .week h3 { font-size: 1rem; margin: 24px 0 8px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-secondary); }
+        .week ul { list-style: none; }
+        .week li { padding: 10px 0 10px 16px; border-left: 3px solid var(--accent); margin-bottom: 10px; background: var(--bg-secondary); border-radius: 0 6px 6px 0; padding-right: 12px; }
+        .week li strong { color: var(--text-primary); }
+        .week li .sub { display: block; color: var(--text-secondary); font-size: 0.95rem; margin-top: 2px; }
+
+        a { color: var(--accent); }
+        a:hover { color: var(--accent-hover); }
+        code { background: var(--code-bg); color: var(--text-primary); padding: 1px 6px; border-radius: 4px; font-size: 0.9em; word-break: break-all; }
+
+        .door { margin-top: 56px; padding: 20px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-secondary); }
+        .door p { color: var(--text-secondary); }
+        .credit { margin-top: 24px; color: var(--text-muted); font-size: 0.85rem; }
+    
+        .post-list { list-style: none; margin-top: 32px; }
+        .post-list li { padding: 20px 0; border-top: 1px solid var(--border); }
+        .post-list a.title { font-size: 1.25rem; font-weight: 700; color: var(--text-primary); text-decoration: none; }
+        .post-list a.title:hover { color: var(--accent); }
+        .post-list .meta, .byline { color: var(--text-muted); font-size: 0.9rem; }
+        .post-list .summary { color: var(--text-secondary); margin-top: 4px; }
+
+        article h1 { font-size: 2.1rem; line-height: 1.2; }
+        article .subtitle { color: var(--text-secondary); font-size: 1.15rem; margin-top: 8px; }
+        article .byline { margin-top: 12px; }
+        article h2 { font-size: 1.3rem; margin: 40px 0 12px; }
+        article p { margin: 0 0 16px; color: var(--text-primary); }
+        article ul { margin: 0 0 16px 22px; }
+        article li { margin-bottom: 8px; }
+        article blockquote { margin: 16px 0; padding: 12px 18px; border-left: 3px solid var(--accent); background: var(--bg-secondary); border-radius: 0 6px 6px 0; color: var(--text-secondary); font-style: italic; }
+        article .closer { font-size: 1.15rem; font-weight: 700; margin-top: 8px; }
+        article .checked { color: var(--text-muted); font-size: 0.9rem; margin-top: 32px; }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="container">
+            <a href="/" class="logo">🏎️✨ wolfejam.dev</a>
+            <a href="/#worth-it" class="nav-worth-it" aria-label="Worth-It Service">🧰</a>
+        </nav>
+    </header>
+
+    <main class="container">
+        <article>
+            <h1>An MCP Story about Rust</h1>
+            <p class="subtitle">From zero to 105 Rust servers in the official MCP Registry</p>
+            <p class="byline">Story · Oct 30, 2026 · <a href="/blog">Blog</a></p>
+
+            <h2>How it was</h2>
+            <p>At the start of 2026, the official MCP Registry knew how to list a server published to npm, PyPI, NuGet, Docker (OCI) or as an MCP bundle. It did not know crates.io.</p>
+            <p>So a Rust MCP server had no proper way in. You could wrap your binary in a bundle and list that, which is what my own server, <code>rust-faf-mcp</code>, did at first (0.2.2, as an <code>mcpb</code>). It worked, but it meant every Rust server pretended to be something else, and a client couldn't run it the way Rust developers install things: <code>cargo install</code>.</p>
+
+            <h2>The hole</h2>
+            <p>The registry decides which package types it trusts. For each one it has a small validator that checks the person publishing really owns the package. npm, PyPI and the others had one. Cargo didn't, so the door was shut for the whole Rust ecosystem.</p>
+
+            <h2>The offer</h2>
+            <p>On March 12 I opened an issue: <a href="https://github.com/modelcontextprotocol/registry/issues/1055">Support crates.io as a package registry type (#1055)</a>.</p>
+            <p>Six weeks later, Radoslav Dimitrov, one of the registry's core maintainers, answered:</p>
+            <blockquote>"Good idea. Rust is a gap worth closing, crates.io is a legitimate ecosystem."</blockquote>
+            <p>He pointed to the registry's guide for adding a package type. That was the offer: here's how, go and do it.</p>
+
+            <h2>The work</h2>
+            <p>The registry is written in Go, so the work was Go, not Rust. The guide has the steps: add the type to the <code>server.json</code> schema, write a validator, add tests and docs.</p>
+            <p>The validator is the heart of it. It proves ownership in two calls to crates.io's own API: ask where the crate's README lives, fetch it, and look for a line that says <code>mcp-name: &lt;your server's name&gt;</code>. Only the crate's owner can put that line there, so it proves the publisher owns the crate.</p>
+            <p><a href="https://github.com/modelcontextprotocol/registry/pull/1207">PR #1207</a> went up on April 26: 10 files, 671 lines added. A reviewer, P4ST4S, checked the two-call flow against live crates.io before it went further.</p>
+
+            <h2>The merge</h2>
+            <p>Rado merged #1207 on June 3. The next two days he hardened it himself: a safer README fetch, clearer status handling and stronger tests (#1330, #1331).</p>
+            <p>On July 13 it shipped to production in registry v1.8.0. The release notes read: "add cargo (crates.io) as a package registry type", with a line marking it as my first contribution. Four days later, <code>rust-faf-mcp</code> was listed as a cargo package.</p>
+
+            <h2>What followed</h2>
+            <p>The same day as the merge, a second piece went live: a hosted version of the server, with its tools written in Rust and compiled to WebAssembly, running on Cloudflare's edge at <code>mcpaas.live/rust</code>. Same tools, no install.</p>
+            <p>In August I sent one more small PR, <a href="https://github.com/modelcontextprotocol/registry/pull/1511">#1511</a>, adding cargo and crates.io to the schema's examples so the docs matched what the registry already did. Rado merged it three days later.</p>
+
+            <h2>The add-ons</h2>
+            <ul>
+                <li><strong>npx.</strong> From 0.4.1 (August 8) the server is also on npm, as a small wrapper. So the registry lists it twice, as cargo and as npm, and anyone with Node can run <code>npx rust-faf-mcp</code> without a Rust toolchain.</li>
+                <li><strong>A name of its own.</strong> From 0.4.0 it's listed as <code>one.faf/rust-faf-mcp</code>, proven by DNS instead of a GitHub account.</li>
+                <li><strong>The basics, done properly.</strong> It builds on the Rust version it declares, builds in Docker, and from 0.8.3 <code>--version</code> and <code>--help</code> answer instead of starting the server.</li>
+            </ul>
+
+            <h2>The latest</h2>
+            <p>This week a check caught something. The same <code>project.faf</code> scored 30% on the hosted Rust server and 9% everywhere else. The hosted worker was on an older SDK. Nothing looked broken: it answered, and the number looked reasonable. Only putting one file through every surface showed it.</p>
+            <p>I moved it to the current kernel and added a test that pins the numbers. Today the same file scores the same on all four surfaces: the CLI, the native Rust server, the hosted Rust server and the hosted TypeScript server.</p>
+
+            <h2>The outcome</h2>
+            <p>Today the official registry lists <strong>105 servers published as cargo packages</strong>, the first on July 13 and the 105th on October 29: 108 days. Two are mine (the old name and the new one). <strong>103 are other people's Rust servers</strong>: databases, SSH, Obsidian, Godot, Moodle, security tools, code search, tools for coding agents, and more. Some ship as cargo and npm together, as mine does.</p>
+            <p>For scale: NuGet (.NET), supported much longer, lists 165. And the pace is rising: 17 new cargo servers in July, 20 in August, 27 in September, 41 in October.</p>
+            <p class="closer">None of those 103 needed me. They needed the door open.</p>
+
+            <h2>The future</h2>
+            <ul>
+                <li><strong>The official Rust SDK still can't target WebAssembly.</strong> Everyone running Rust MCP on the edge, me included, works around it. When it can, the edge becomes the easy path for Rust servers.</li>
+                <li><strong>Same input, every surface.</strong> The check that caught this week's drift is a habit anyone can copy. Any server that runs in more than one place can drift the same way.</li>
+                <li><strong>More doors.</strong> The guide that let cargo in is open to the next ecosystem that's missing.</li>
+            </ul>
+
+            <p class="checked">Numbers checked against the live registry API, the GitHub record and the live servers on October 30, 2026.</p>
+        </article>
+
+        <section class="door">
+            <p>Running an MCP server, in Rust or anything else? <a href="/#worth-it">The Worth-It Service</a> starts with a free report.</p>
+        </section>
+
+        <p class="credit">— Drafted by Claude · Approved by James Wolfe</p>
+    </main>
+</body>
+</html>
