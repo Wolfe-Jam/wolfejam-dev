@@ -28,6 +28,10 @@
             --text-muted: #7a7a7a;
             --accent: #E74C3C;
             --accent-hover: #C0392B;
+            --faf: #FF6B35;
+            --faf-hover: #e55a2b;
+            --service: #E74C3C;
+            --service-hover: #C0392B;
             --border: #e5e5e5;
             --code-bg: #f5f5f5;
         }
@@ -40,6 +44,10 @@
             --text-muted: #a0a0a0;
             --accent: #E74C3C;
             --accent-hover: #ff7b6e;
+            --faf: #FF6B35;
+            --faf-hover: #ff8a5c;
+            --service: #E74C3C;
+            --service-hover: #ff7b6e;
             --border: #333333;
             --code-bg: #262626;
         }
@@ -55,12 +63,19 @@
 
         .container { max-width: 760px; margin: 0 auto; padding: 0 24px; }
 
-        header { padding: 24px 0; border-bottom: 1px solid var(--border); }
+        header { padding: 24px 0; border-bottom: 1px solid var(--border); background: var(--bg-primary); position: sticky; top: 0; z-index: 100; }
+        header .container { max-width: 1200px; }
         nav { display: flex; justify-content: space-between; align-items: center; }
-        .logo { font-weight: 700; color: var(--text-primary); text-decoration: none; }
+        .logo, .logo:hover { font-size: 24px; font-weight: 700; color: var(--text-primary); text-decoration: none; }
         .logo .car { font-size: 34px; line-height: 1; vertical-align: -0.12em; }
+        .nav-right { display: flex; align-items: center; gap: 12px; }
+        .nav-sep { color: var(--text-muted); font-size: 15px; }
+        .nav-link { color: var(--text-primary); font-weight: 600; font-size: 15px; text-decoration: none; }
+        .nav-link:hover, .nav-link:focus-visible { text-decoration: underline; text-underline-offset: 6px; }
+        .nav-link.active { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 6px; }
         .nav-worth-it { font-size: 26px; line-height: 1; text-decoration: none; }
-
+        a.faf { color: var(--faf); }
+        a.faf:hover { color: var(--faf-hover); }
         main { padding: 48px 0 64px; }
         h1 { font-size: 2rem; letter-spacing: 0.02em; }
         .intro { color: var(--text-secondary); margin-top: 8px; }
@@ -75,8 +90,10 @@
         .week li strong { color: var(--text-primary); }
         .week li .sub { display: block; color: var(--text-secondary); font-size: 0.95rem; margin-top: 2px; }
 
-        a { color: var(--accent); }
-        a:hover { color: var(--accent-hover); }
+        a { color: var(--text-primary); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+        a:hover { color: var(--text-secondary); }
+        a.service { color: var(--service); font-weight: 600; }
+        a.service:hover { color: var(--service-hover); }
         code { background: var(--code-bg); color: var(--text-primary); padding: 1px 6px; border-radius: 4px; font-size: 0.9em; word-break: break-all; }
 
         .door { margin-top: 56px; padding: 20px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-secondary); }
@@ -93,8 +110,8 @@
         .post-list li { padding: 20px 0; border-top: 1px solid var(--border); }
         .post-list a.title { font-size: 1.25rem; font-weight: 700; color: var(--text-primary); text-decoration: none; }
         .post-list a.title:hover { text-decoration: underline; }
-        .post-list .read { display: inline-block; margin-top: 8px; font-weight: 600; text-decoration: none; color: #E74C3C; }
-        .post-list .read:hover { color: #C0392B; text-decoration: underline; }
+        .post-list .read { display: inline-block; margin-top: 8px; font-weight: 600; text-decoration: none; color: var(--text-primary); }
+        .post-list .read:hover { color: var(--text-primary); text-decoration: underline; }
         main.blog-index { padding-top: 80px; }
         .post-list .meta, .byline { color: var(--text-muted); font-size: 0.9rem; }
         .post-list .summary { color: var(--text-secondary); margin-top: 4px; }
@@ -205,7 +222,15 @@
     <header>
         <nav class="container">
             <a href="/" class="logo"><span class="car">🏎️</span>✨ wolfejam.dev</a>
-            <a href="/#worth-it" class="nav-worth-it" aria-label="Worth-It Service">🧰</a>
+            <div class="nav-right">
+                <a href="/blog" class="nav-link">Blog</a>
+                <span class="nav-sep" aria-hidden="true">|</span>
+                <a href="/shipped" class="nav-link">Shipped</a>
+                <span class="nav-sep" aria-hidden="true">|</span>
+                <a href="/info" class="nav-link active" aria-current="page">Info</a>
+                <span class="nav-sep" aria-hidden="true">|</span>
+                <a href="/#worth-it" class="nav-worth-it" aria-label="Worth-It Service">🧰</a>
+            </div>
         </nav>
     </header>
 
@@ -218,7 +243,7 @@
             <p><strong>James | wolfejam</strong><br>Industrial designer · Software developer · AI engineer · Author</p>
             <ul>
                 <li>Added cargo (crates.io) as a package type to the official MCP Registry: <a href="https://github.com/modelcontextprotocol/registry/pull/1207">#1207</a>.</li>
-                <li>Author of the <code>.faf</code> format for AI context, registered with IANA as <a href="https://www.iana.org/assignments/media-types/application/vnd.faf+yaml"><code>application/vnd.faf+yaml</code></a>.</li>
+                <li>Author of the <code>.faf</code> format for AI context, registered with IANA as <a class="faf" href="https://www.iana.org/assignments/media-types/application/vnd.faf+yaml"><code>application/vnd.faf+yaml</code></a>.</li>
                 <li>AAIF Ambassador.</li>
                 <li>Code: <a href="https://github.com/Wolfe-Jam">github.com/Wolfe-Jam</a></li>
             </ul>
@@ -233,7 +258,7 @@
 
             <h2>Services</h2>
             <p>If you don't have the time, or know someone who doesn't: I set up, test, and maintain MCP servers, in Rust or anything else. It starts with a free report.</p>
-            <p><a class="read" href="/#worth-it">The Worth-It Service →</a></p>
+            <p><a class="read service" href="/#worth-it">The Worth-It Service →</a></p>
         </section>
 
         <p class="credit">— Drafted by Claude · Edited by James Wolfe</p>
