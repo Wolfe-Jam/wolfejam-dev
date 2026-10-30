@@ -28,6 +28,10 @@
             --text-muted: #7a7a7a;
             --accent: #FF6B35;
             --accent-hover: #e55a2b;
+            --faf: #FF6B35;
+            --faf-hover: #e55a2b;
+            --service: #E74C3C;
+            --service-hover: #C0392B;
             --border: #e5e5e5;
             --code-bg: #f5f5f5;
         }
@@ -40,6 +44,10 @@
             --text-muted: #a0a0a0;
             --accent: #FF6B35;
             --accent-hover: #ff8a5c;
+            --faf: #FF6B35;
+            --faf-hover: #ff8a5c;
+            --service: #E74C3C;
+            --service-hover: #ff7b6e;
             --border: #333333;
             --code-bg: #262626;
         }
@@ -55,12 +63,19 @@
 
         .container { max-width: 760px; margin: 0 auto; padding: 0 24px; }
 
-        header { padding: 24px 0; border-bottom: 1px solid var(--border); }
+        header { padding: 24px 0; border-bottom: 1px solid var(--border); background: var(--bg-primary); position: sticky; top: 0; z-index: 100; }
+        header .container { max-width: 1200px; }
         nav { display: flex; justify-content: space-between; align-items: center; }
-        .logo { font-weight: 700; color: var(--text-primary); text-decoration: none; }
+        .logo { font-size: 24px; font-weight: 700; color: var(--text-primary); text-decoration: none; }
         .logo .car { font-size: 34px; line-height: 1; vertical-align: -0.12em; }
+        .nav-right { display: flex; align-items: center; gap: 12px; }
+        .nav-sep { color: var(--text-muted); font-size: 15px; }
+        .nav-link { color: var(--text-primary); font-weight: 600; font-size: 15px; text-decoration: none; }
+        .nav-link:hover, .nav-link:focus-visible { color: var(--accent); }
+        .nav-link.active { color: var(--accent); }
         .nav-worth-it { font-size: 26px; line-height: 1; text-decoration: none; }
-
+        a.faf { color: var(--faf); }
+        a.faf:hover { color: var(--faf-hover); }
         main { padding: 48px 0 64px; }
         h1 { font-size: 2rem; letter-spacing: 0.02em; }
         .intro { color: var(--text-secondary); margin-top: 8px; }
@@ -178,7 +193,15 @@
     <header>
         <nav class="container">
             <a href="/" class="logo"><span class="car">🏎️</span>✨ wolfejam.dev</a>
-            <a href="/#worth-it" class="nav-worth-it" aria-label="Worth-It Service">🧰</a>
+            <div class="nav-right">
+                <a href="/blog" class="nav-link">Blog</a>
+                <span class="nav-sep" aria-hidden="true">|</span>
+                <a href="/shipped" class="nav-link active" aria-current="page">Shipped</a>
+                <span class="nav-sep" aria-hidden="true">|</span>
+                <a href="/info" class="nav-link">Info</a>
+                <span class="nav-sep" aria-hidden="true">|</span>
+                <a href="/#worth-it" class="nav-worth-it" aria-label="Worth-It Service">🧰</a>
+            </div>
         </nav>
     </header>
 
