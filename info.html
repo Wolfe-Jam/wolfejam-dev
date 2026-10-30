@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Info — WOLFE ∞ JAMES</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="apple-touch-icon" href="/favicon.png">
+    <meta name="description" content="James Wolfe: industrial designer, software developer, AI engineer. About the author, this site, and the Worth-It Service.">
+    <meta name="author" content="James (Wolfe) Harrison">
+    <link rel="canonical" href="https://wolfejam.dev/info">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://wolfejam.dev/info">
+    <meta property="og:title" content="Info — WOLFE ∞ JAMES">
+    <meta property="og:description" content="James Wolfe: industrial designer, software developer, AI engineer. About the author, this site, and the Worth-It Service.">
+    <meta property="og:image" content="https://wolfejam.dev/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <script>
+        // Same theme key as the home page, set before paint.
+        try { document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light'); } catch (e) {}
+    </script>
+    <style>
+        :root {
+            --bg-primary: #fefcf8;
+            --bg-secondary: #f9f6f1;
+            --text-primary: #1a1a1a;
+            --text-secondary: #4a4a4a;
+            --text-muted: #7a7a7a;
+            --accent: #E74C3C;
+            --accent-hover: #C0392B;
+            --border: #e5e5e5;
+            --code-bg: #f5f5f5;
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #0f0f0f;
+            --bg-secondary: #1a1a1a;
+            --text-primary: #f5f5f5;
+            --text-secondary: #d0d0d0;
+            --text-muted: #a0a0a0;
+            --accent: #E74C3C;
+            --accent-hover: #ff7b6e;
+            --border: #333333;
+            --code-bg: #262626;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background: var(--bg-primary);
+        }
+
+        .container { max-width: 760px; margin: 0 auto; padding: 0 24px; }
+
+        header { padding: 24px 0; border-bottom: 1px solid var(--border); }
+        nav { display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-weight: 700; color: var(--text-primary); text-decoration: none; }
+        .nav-worth-it { font-size: 26px; line-height: 1; text-decoration: none; }
+
+        main { padding: 48px 0 64px; }
+        h1 { font-size: 2rem; letter-spacing: 0.02em; }
+        .intro { color: var(--text-secondary); margin-top: 8px; }
+
+        .week { margin-top: 48px; padding-top: 32px; border-top: 1px solid var(--border); }
+        .week h2 { font-size: 1.35rem; }
+        .week h2 a { color: inherit; text-decoration: none; }
+        .week .range { color: var(--text-muted); font-size: 0.95rem; }
+        .week h3 { font-size: 1rem; margin: 24px 0 8px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-secondary); }
+        .week ul { list-style: none; }
+        .week li { padding: 10px 0 10px 16px; border-left: 3px solid var(--accent); margin-bottom: 10px; background: var(--bg-secondary); border-radius: 0 6px 6px 0; padding-right: 12px; }
+        .week li strong { color: var(--text-primary); }
+        .week li .sub { display: block; color: var(--text-secondary); font-size: 0.95rem; margin-top: 2px; }
+
+        a { color: var(--accent); }
+        a:hover { color: var(--accent-hover); }
+        code { background: var(--code-bg); color: var(--text-primary); padding: 1px 6px; border-radius: 4px; font-size: 0.9em; word-break: break-all; }
+
+        .door { margin-top: 56px; padding: 20px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-secondary); }
+        .door p { color: var(--text-secondary); }
+        .info h2 { font-size: 1.3rem; margin: 40px 0 12px; }
+        .info p { margin: 0 0 12px; }
+        .info ul { margin: 0 0 16px 22px; }
+        .info li { margin-bottom: 8px; }
+        .info a.read { font-weight: 600; text-decoration: none; }
+        .info a.read:hover { text-decoration: underline; }
+        .credit { margin-top: 24px; color: var(--text-muted); font-size: 0.85rem; }
+    
+        .post-list { list-style: none; margin-top: 32px; }
+        .post-list li { padding: 20px 0; border-top: 1px solid var(--border); }
+        .post-list a.title { font-size: 1.25rem; font-weight: 700; color: var(--text-primary); text-decoration: none; }
+        .post-list a.title:hover { text-decoration: underline; }
+        .post-list .read { display: inline-block; margin-top: 8px; font-weight: 600; text-decoration: none; color: #E74C3C; }
+        .post-list .read:hover { color: #C0392B; text-decoration: underline; }
+        main.blog-index { padding-top: 80px; }
+        .post-list .meta, .byline { color: var(--text-muted); font-size: 0.9rem; }
+        .post-list .summary { color: var(--text-secondary); margin-top: 4px; }
+
+        article h1 { font-size: 2.1rem; line-height: 1.2; }
+        article .subtitle { color: var(--text-secondary); font-size: 1.15rem; margin-top: 8px; }
+        article .byline { margin-top: 12px; }
+        article h2 { font-size: 1.3rem; margin: 40px 0 12px; }
+        article p { margin: 0 0 16px; color: var(--text-primary); }
+        article ul { margin: 0 0 16px 22px; }
+        article li { margin-bottom: 8px; }
+        article blockquote { margin: 16px 0; padding: 12px 18px; border-left: 3px solid var(--accent); background: var(--bg-secondary); border-radius: 0 6px 6px 0; color: var(--text-secondary); font-style: italic; }
+        article .closer { font-size: 1.15rem; font-weight: 700; margin-top: 8px; }
+        article .checked { color: var(--text-muted); font-size: 0.9rem; margin-top: 32px; }
+
+        /* WolfejamGizmo - Signature half-moon theme toggle */
+        .wolfejam-gizmo {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 48px;
+            height: 48px;
+            padding: 0;
+            background: transparent;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            outline: none;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+
+        .wolfejam-gizmo__gradient {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #FFF 50%, #121212 50%);
+            transition: transform 0.3s ease;
+            border-radius: 50%;
+        }
+
+        .wolfejam-gizmo__gradient--dark {
+            transform: rotate(180deg);
+        }
+
+        .wolfejam-gizmo:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 16px rgba(0, 255, 255, 0.3);
+        }
+
+        .wolfejam-gizmo:active {
+            transform: scale(0.95);
+        }
+
+        .wolfejam-gizmo:focus {
+            outline: 2px solid #00FFFF;
+            outline-offset: 2px;
+        }
+
+        .wolfejam-gizmo:focus:not(:focus-visible) {
+            outline: none;
+        }
+
+        .wolfejam-gizmo__tooltip {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-bottom: 8px;
+            background: #fffccc;
+            color: #000;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            white-space: nowrap;
+            pointer-events: none;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .wolfejam-gizmo:hover .wolfejam-gizmo__tooltip {
+            opacity: 1;
+        }
+
+        .wolfejam-gizmo__tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+            border-top: 4px solid #fffccc;
+        }
+    </style>
+</head>
+<body>
+    <!-- WolfejamGizmo - Signature theme toggle (same as the home page) -->
+    <button class="wolfejam-gizmo" id="themeToggle" aria-label="Toggle theme">
+        <div class="wolfejam-gizmo__gradient" id="themeGradient"></div>
+        <div class="wolfejam-gizmo__tooltip" id="themeTooltip">WolfeJam's Gizmo</div>
+    </button>
+    <header>
+        <nav class="container">
+            <a href="/" class="logo">🏎️✨ wolfejam.dev</a>
+            <a href="/#worth-it" class="nav-worth-it" aria-label="Worth-It Service">🧰</a>
+        </nav>
+    </header>
+
+    <main class="container blog-index">
+        <h1>Info</h1>
+        <p class="intro">About me, this site, and the work I take on.</p>
+
+        <section class="info">
+            <h2>Author</h2>
+            <p><strong>James Wolfe</strong>: industrial designer, software developer, AI engineer.</p>
+            <ul>
+                <li>Added cargo (crates.io) as a package type to the official MCP Registry: <a href="https://github.com/modelcontextprotocol/registry/pull/1207">#1207</a>.</li>
+                <li>Author of the <code>.faf</code> format for AI context, registered with IANA as <a href="https://www.iana.org/assignments/media-types/application/vnd.faf+yaml"><code>application/vnd.faf+yaml</code></a>.</li>
+                <li>AAIF Ambassador.</li>
+                <li>Code: <a href="https://github.com/Wolfe-Jam">github.com/Wolfe-Jam</a></li>
+            </ul>
+
+            <h2>This site</h2>
+            <p>wolfejam.dev is my own site: honest, real dev work.</p>
+            <ul>
+                <li><a href="/blog">Blog</a>: stories from the work.</li>
+                <li><a href="/shipped">Shipped</a>: what went out, week by week.</li>
+                <li><a href="https://github.com/Wolfe-Jam/rust-mcp-census">The Rust MCP Census</a>: every Rust server in the MCP Registry, counted each week.</li>
+            </ul>
+
+            <h2>Services</h2>
+            <p>If you don't have the time, or know someone who doesn't: I set up, test, and maintain MCP servers, in Rust or anything else. It starts with a free report.</p>
+            <p><a class="read" href="/#worth-it">The Worth-It Service →</a></p>
+        </section>
+
+        <p class="credit">— Drafted by Claude · Approved by James Wolfe</p>
+    </main>
+    <script>
+        // WolfejamGizmo: same key as the home page, so the choice carries across the site.
+        (function () {
+            const html = document.documentElement;
+            const toggle = document.getElementById('themeToggle');
+            const gradient = document.getElementById('themeGradient');
+            const show = (t) => gradient.classList.toggle('wolfejam-gizmo__gradient--dark', t === 'dark');
+            show(html.getAttribute('data-theme'));
+            toggle.addEventListener('click', () => {
+                const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+                html.setAttribute('data-theme', next);
+                try { localStorage.setItem('theme', next); } catch (e) {}
+                show(next);
+            });
+        })();
+    </script>
+</body>
+</html>
