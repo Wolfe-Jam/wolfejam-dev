@@ -60,13 +60,13 @@
         header { padding: 24px 0; border-bottom: 1px solid var(--border); background: var(--bg-primary); position: sticky; top: 0; z-index: 100; }
         header .container { max-width: 1200px; }
         nav { display: flex; justify-content: space-between; align-items: center; }
-        .logo { font-size: 24px; font-weight: 700; color: var(--text-primary); text-decoration: none; }
+        .logo, .logo:hover { font-size: 24px; font-weight: 700; color: var(--text-primary); text-decoration: none; }
         .logo .car { font-size: 34px; line-height: 1; vertical-align: -0.12em; }
         .nav-right { display: flex; align-items: center; gap: 12px; }
         .nav-sep { color: var(--text-muted); font-size: 15px; }
         .nav-link { color: var(--text-primary); font-weight: 600; font-size: 15px; text-decoration: none; }
-        .nav-link:hover, .nav-link:focus-visible { color: var(--accent); }
-        .nav-link.active { color: var(--accent); }
+        .nav-link:hover, .nav-link:focus-visible { text-decoration: underline; text-underline-offset: 6px; }
+        .nav-link.active { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 6px; }
         .nav-worth-it { font-size: 26px; line-height: 1; text-decoration: none; }
         a.faf { color: var(--faf); }
         a.faf:hover { color: var(--faf-hover); }
@@ -84,8 +84,10 @@
         .week li strong { color: var(--text-primary); }
         .week li .sub { display: block; color: var(--text-secondary); font-size: 0.95rem; margin-top: 2px; }
 
-        a { color: var(--accent); }
-        a:hover { color: var(--accent-hover); }
+        a { color: var(--text-primary); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+        a:hover { color: var(--text-secondary); }
+        a.service { color: var(--service); font-weight: 600; }
+        a.service:hover { color: var(--service-hover); }
         code { background: var(--code-bg); color: var(--text-primary); padding: 1px 6px; border-radius: 4px; font-size: 0.9em; word-break: break-all; }
 
         .door { margin-top: 56px; padding: 20px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-secondary); }
@@ -102,8 +104,8 @@
         .post-list li { padding: 20px 0; border-top: 1px solid var(--border); }
         .post-list a.title { font-size: 1.25rem; font-weight: 700; color: var(--text-primary); text-decoration: none; }
         .post-list a.title:hover { text-decoration: underline; }
-        .post-list .read { display: inline-block; margin-top: 8px; font-weight: 600; text-decoration: none; color: #E74C3C; }
-        .post-list .read:hover { color: #C0392B; text-decoration: underline; }
+        .post-list .read { display: inline-block; margin-top: 8px; font-weight: 600; text-decoration: none; color: var(--text-primary); }
+        .post-list .read:hover { color: var(--text-primary); text-decoration: underline; }
         main.blog-index { padding-top: 80px; }
         .post-list .meta, .byline { color: var(--text-muted); font-size: 0.9rem; }
         .post-list .summary { color: var(--text-secondary); margin-top: 4px; }
