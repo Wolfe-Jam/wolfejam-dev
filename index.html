@@ -791,7 +791,7 @@
                     <img src="/brand-card.png" width="400" height="300" alt="Software Engineer & Format Architect - AAIF Ambassador - 3x IANA Registered - Creator of .FAF - Author of The 8 Eternal Cs">
                 </div>
                 
-                <p class="tagline">30 years designing formats that last. From Commodore Amiga to Internet AI standards, building technical infrastructure you can trust for the AI era.</p>
+                <p class="tagline">30 years designing formats that last. From Commodore Amiga to Internet AI standards.</p>
             </div>
         </section>
 
@@ -800,9 +800,9 @@
                 <h2>Standards Body Work</h2>
 
                 <div class="achievement" style="border-left: 4px solid #FF702D;">
-                    <h3 style="color: #FF702D;">AAIF Ambassador <span style="display: inline-block; background: #FF702D; color: #000; font-size: 11px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; padding: 3px 8px; border-radius: 999px; vertical-align: middle; margin-left: 8px;">New</span></h3>
+                    <h3 style="color: #FF702D;">AAIF Ambassador</h3>
                     <p>
-                        Founding Ambassador (2026 inaugural cohort) of the Agentic AI Foundation (AAIF) — the Linux Foundation project governing MCP, Goose, and AGENTS.md.
+                        Founding Ambassador (2026 inaugural cohort) of the Agentic AI Foundation (AAIF) — the Linux Foundation home of MCP, goose, AGENTS.md and other open agent projects.
                     </p>
                     <p class="achievement-meta">
                         <a href="https://aaif.io" class="project-link" target="_blank" style="color: #FF702D;">aaif.io</a> • Onboarded June 2026
@@ -810,9 +810,9 @@
                 </div>
 
                 <div class="achievement">
-                    <h3>MCP Registry — Cargo Support</h3>
+                    <h3>MCP Registry — cargo support</h3>
                     <p>
-                        Authored and merged <a href="https://github.com/modelcontextprotocol/registry/pull/1207" class="project-link" target="_blank">PR #1207</a> on the official Model Context Protocol Registry, adding Cargo (crates.io) as a first-class package registry type — schema, validator, and integration tests. Opened the documented registration path for the ~1,800 Rust MCP-related crates that previously had only a binary-packaging workaround. <code>rust-faf-mcp</code> was the first live, end-to-end validated example.
+                        Authored <a href="https://github.com/modelcontextprotocol/registry/pull/1207" class="project-link" target="_blank">PR #1207</a> on the official Model Context Protocol Registry, adding cargo (crates.io) as a package registry type: schema, validator, and integration tests. Live since registry v1.8.0 (July 13, 2026). <code>rust-faf-mcp</code> was listed as cargo four days later; <a href="https://github.com/Wolfe-Jam/rust-mcp-census" class="project-link" target="_blank">the Rust MCP Census</a> counts the rest, every week.
                     </p>
                     <p class="achievement-meta">Merged June 3, 2026 • modelcontextprotocol/registry</p>
                 </div>
@@ -821,7 +821,6 @@
                     <h3 style="color: #00D4D4;">IANA Media Type Registrations — 3</h3>
                     <p>
                         Registered three official Internet media types with IANA (Internet Assigned Numbers Authority) — the full FAF format family, each independently registered.
-                        The first, <code>application/vnd.faf+yaml</code>, is the first IANA-registered format with an official Anthropic MCP server.
                     </p>
                     <p class="achievement-meta">
                         <a href="https://www.iana.org/assignments/media-types/application/vnd.faf+yaml" class="project-link" target="_blank" style="color: #00D4D4;">vnd.faf+yaml</a> (Context, Oct 2025) •
@@ -875,13 +874,13 @@
                 <div class="project-card">
                     <h3>.faf Format (Foundational AI-context Format)</h3>
                     <p>
-                        Universal format for AI project context. IANA-registered, validated by Anthropic (official MCP server),
-                        Google-approved (Chrome extension), and in production use across thousands of projects.
+                        Universal format for AI project context. IANA-registered, with MCP servers for Claude, Grok and Gemini,
+                        and a Chrome extension on the Chrome Web Store.
                     </p>
                     <p>
                         <strong>Downloads:</strong> 120,000+ across npm, PyPI, and crates.io<br>
                         <strong>White Papers:</strong> 3 published on Zenodo (CERN), each with its own DOI<br>
-                        <strong>MCP Servers:</strong> 6 servers across Claude, Grok, Gemini, Cursor/IDE, and native Rust<br>
+                        <strong>MCP Servers:</strong> 5, for Claude, Grok, Gemini, Cursor/IDEs, and native Rust<br>
                         <strong>Compilers:</strong> TypeScript, Rust (native + WASM), Zig (2.7KB WASM)
                     </p>
                     <a href="https://faf.one" class="project-link" target="_blank">Visit faf.one →</a>
@@ -895,8 +894,7 @@
                         Context, Compile, Control, Cache, Compute, Communicate, Complete, and Cybernetics.
                     </p>
                     <p>
-                        The theoretical foundation underlying the .faf architecture. Explains why Context-Mirroring works
-                        and how bi-directional sync enables persistent AI understanding.
+                        The theoretical foundation underlying the .faf architecture. Explains why Context-Mirroring works.
                     </p>
                     <p>
                         <strong>Published:</strong> December 8, 2025<br>
@@ -909,12 +907,11 @@
                 <div class="project-card">
                     <h3>MCP Server Ecosystem (Claude, Grok, Gemini, Cursor/IDE)</h3>
                     <p>
-                        <strong>First Anthropic-approved persistent project context server.</strong>
-                        Official MCP implementation merged into Anthropic's registry (PR #2759, October 2025).
-                        Expanded to 6 MCP servers across 4 AI platforms.
+                        Listed in the MCP servers repo (<a href="https://github.com/modelcontextprotocol/servers/pull/2759" class="project-link" target="_blank">modelcontextprotocol/servers #2759</a>, October 2025).
+                        Five MCP servers across four AI platforms, plus the CLI.
                     </p>
                     <p>
-                        <strong>claude-faf-mcp:</strong> Official Anthropic MCP server, Desktop Extension (.mcpb)<br>
+                        <strong>claude-faf-mcp:</strong> Claude MCP server, Desktop Extension (.mcpb)<br>
                         <strong>faf-cli:</strong> Universal CLI (npm + Homebrew)<br>
                         <strong>grok-faf-mcp:</strong> xAI Grok integration (npm)<br>
                         <strong>gemini-faf-mcp:</strong> Google Gemini integration (PyPI)<br>
@@ -923,7 +920,6 @@
                     </p>
                     <p>
                         <strong>Status:</strong> Production on 3 registries (npm, PyPI, crates.io)<br>
-                        <strong>Total Ecosystem Downloads:</strong> 120,000+<br>
                         <strong>Architecture:</strong> stdio transport, Desktop Extension (.mcpb), native Rust + WASM compile targets
                     </p>
                     <a href="https://faf.one/downloads" class="project-link" target="_blank">All Downloads →</a>
@@ -938,7 +934,7 @@
                     </p>
                     <p>
                         <strong>agents-md-facts:</strong> authors AGENTS.md from a repo's real facts — commands, entry points, conventions. Nothing invented.<br>
-                        <strong>mcp-better:</strong> applies the same discipline to MCP tool catalogs — a live host was found still running an outdated version against a newer published registry, a real example of the exact drift problem it exists to catch.
+                        <strong>mcp-better:</strong> applies the same discipline to MCP tool catalogs: it checks that a server's live tools match what it published. It has already caught a live host running an older version than the registry listed.
                     </p>
                     <p class="achievement-meta">Featured by the Agentic AI Foundation on LinkedIn, August 2026 — "MCP mid-call is where 'honest tool catalog' and 'actually works' split."</p>
                     <a href="https://github.com/Wolfe-Jam/agents-md-facts" class="project-link" target="_blank">agents-md-facts on GitHub →</a>
@@ -956,7 +952,7 @@
                         <strong>Supports:</strong> Claude, GPT, Grok, Gemini<br>
                         <strong>Downloads:</strong> 1,200+ (npm)
                     </p>
-                    <a href="https://mcpaas.live/slash" class="project-link" target="_blank">Visit slashtokens.com →</a>
+                    <a href="https://slashtokens.com" class="project-link" target="_blank">Visit slashtokens.com →</a>
                 </div>
 
                 <div class="project-card">
@@ -1064,7 +1060,7 @@
 
     <footer>
         <div class="container">
-            <p>&copy; 2026 Wolfe James LLC. <a href="https://faf.one/links#iana" target="_blank" rel="noopener noreferrer" style="color: var(--text-primary); text-decoration: underline;">3x IANA-registered .FAF family creator</a> | AAIF Ambassador</p>
+            <p>&copy; 2026 Wolfe James LLC. <a href="https://faf.one/links#iana" target="_blank" rel="noopener noreferrer" style="color: var(--text-primary); text-decoration: underline;">3x IANA-registered .faf family creator</a> | AAIF Ambassador</p>
         </div>
     </footer>
 
