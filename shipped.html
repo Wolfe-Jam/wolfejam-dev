@@ -94,7 +94,7 @@
         a:hover { color: var(--text-secondary); }
         a.service { color: var(--service); font-weight: 600; }
         a.service:hover { color: var(--service-hover); }
-        code { background: var(--code-bg); color: var(--text-primary); padding: 1px 6px; border-radius: 4px; font-size: 0.9em; word-break: break-all; }
+        code { background: var(--code-bg); color: var(--text-primary); padding: 1px 6px; border-radius: 4px; font-size: 0.9em; overflow-wrap: anywhere; }
 
         .door { margin-top: 56px; padding: 20px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-secondary); }
         .door p { color: var(--text-secondary); }
@@ -183,6 +183,15 @@
             border-left: 4px solid transparent;
             border-right: 4px solid transparent;
             border-top: 4px solid #fffccc;
+        }
+        @media (max-width: 520px) {
+            header { padding: 16px 0; }
+            .logo { font-size: 17px; white-space: nowrap; }
+            .logo .car { font-size: 24px; }
+            .nav-right { gap: 9px; }
+            .nav-link, .nav-shipped { font-size: 14px; }
+            .nav-sep { display: none; }
+            .nav-worth-it { font-size: 22px; }
         }
     </style>
 </head>
