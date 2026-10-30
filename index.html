@@ -577,6 +577,24 @@
             text-align: left;
         }
 
+        .compare { max-width: 760px; margin: 48px auto 8px; }
+        .compare h3 { text-align: center; font-size: 22px; margin-bottom: 16px; color: var(--text-primary); }
+        .compare table { width: 100%; border-collapse: collapse; font-size: 15px; }
+        .compare th, .compare td { padding: 12px 14px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--border); }
+        .compare thead th { font-size: 16px; color: var(--text-primary); }
+        .compare thead th span { display: block; font-size: 14px; font-weight: 600; color: var(--service); margin-top: 2px; }
+        .compare tbody th { font-weight: 600; color: var(--text-primary); white-space: nowrap; }
+        .compare td { color: var(--text-secondary); }
+        .compare td.none { color: var(--text-muted); }
+        .compare tr.rate td { font-weight: 700; color: var(--text-primary); }
+        .compare tfoot td, .compare tfoot th { border-bottom: 0; }
+        .compare td.save { font-weight: 700; color: var(--service); }
+        @media (max-width: 560px) {
+            .compare table { font-size: 13.5px; }
+            .compare th, .compare td { padding: 10px 6px; }
+            .compare tbody th { white-space: normal; }
+        }
+
         .worth-it .close {
             text-align: center;
             color: var(--text-secondary);
@@ -1022,7 +1040,7 @@
 
                     <div class="project-card">
                         <h3>Worth-It Monthly</h3>
-                        <div class="offer-price">$149 <small>/month per server, founding price</small></div>
+                        <div class="offer-price">$150 <small>/month per server, founding price</small></div>
                         <p>The check every month, compared with last month, read by me, with small fixes included. You know it stayed fixed.</p>
                         <button class="project-link offer-cta" data-offer="Worth-It Monthly">Start monthly checks →</button>
                     </div>
@@ -1040,6 +1058,26 @@
                         <p>Up to 1 hour a week (4 hours a month) of upkeep, upgrades when the spec moves, and priority fixes. That's $100 an hour on the maintenance plan rate, against my standard $220. Founding prices stay while you do.</p>
                         <button class="project-link offer-cta" data-offer="Maintenance">Talk about maintenance →</button>
                     </div>
+                </div>
+
+                <div class="compare">
+                    <h3>What you get for what you pay</h3>
+                    <table>
+                        <thead>
+                            <tr><th></th><th>Worth-It Monthly<span>$150 /month</span></th><th>Maintenance<span>$400 /month</span></th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><th>Week 1</th><td>The check, read by me, small fixes</td><td>The check + up to 1&nbsp;hr of engineering</td></tr>
+                            <tr><th>Week 2</th><td class="none">—</td><td>The check + up to 1&nbsp;hr</td></tr>
+                            <tr><th>Week 3</th><td class="none">—</td><td>The check + up to 1&nbsp;hr</td></tr>
+                            <tr><th>Week 4</th><td class="none">—</td><td>The check + up to 1&nbsp;hr</td></tr>
+                            <tr class="rate"><th>Engineering rate</th><td>$220 /hr</td><td>$100 /hr</td></tr>
+                            <tr class="rate"><th>4 hours of engineering</th><td>$880</td><td>$400</td></tr>
+                        </tbody>
+                        <tfoot>
+                            <tr><th></th><td></td><td class="save">You save $480 a month</td></tr>
+                        </tfoot>
+                    </table>
                 </div>
 
                 <p class="close"><strong>Who tracks your MCP servers, keeps them on spec, and pays when they drift?</strong></p>
