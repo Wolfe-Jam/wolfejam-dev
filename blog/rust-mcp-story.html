@@ -99,6 +99,7 @@
         article blockquote { margin: 16px 0; padding: 12px 18px; border-left: 3px solid var(--accent); background: var(--bg-secondary); border-radius: 0 6px 6px 0; color: var(--text-secondary); font-style: italic; }
         article .closer { font-size: 1.15rem; font-weight: 700; margin-top: 8px; }
         main.post { padding-top: 80px; }
+        article h3 { font-size: 1rem; margin: 20px 0 8px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-secondary); }
         article .checked { color: var(--text-muted); font-size: 0.9rem; margin-top: 32px; }
 
         /* WolfejamGizmo - Signature half-moon theme toggle */
@@ -257,6 +258,28 @@
                 <li><strong>The official Rust SDK still can't target WebAssembly.</strong> Everyone running Rust MCP on the edge, myself included, works around it. Once that lands, the edge becomes the easy path for Rust servers.</li>
                 <li><strong>Same input, every surface.</strong> The check that caught this week's drift is a habit anyone can copy. Any server that runs in more than one place can drift the same way.</li>
                 <li><strong>More doors.</strong> The guide that let cargo in is open to the next ecosystem that's missing.</li>
+            </ul>
+
+            <h2>Links</h2>
+            <h3>List your Rust server</h3>
+            <ul>
+                <li><a href="https://modelcontextprotocol.io/registry/package-types#cargo-rust-packages">Cargo (Rust) packages</a>: the <code>server.json</code> entry for a crate.</li>
+                <li>Put the <code>mcp-name:</code> line in your crate's README where people can see it. crates.io strips HTML comments, so a hidden one disappears.</li>
+                <li><a href="https://modelcontextprotocol.io/registry/quickstart">Publishing to the registry</a>: the quickstart, with <code>mcp-publisher</code>.</li>
+            </ul>
+            <h3>Useful links</h3>
+            <ul>
+                <li><a href="https://registry.modelcontextprotocol.io">The official MCP Registry</a></li>
+                <li><a href="https://github.com/modelcontextprotocol/registry/blob/main/docs/contributing/add-package-registry.md">Adding a package type to the registry</a>: the guide Rado pointed to.</li>
+                <li><a href="https://github.com/modelcontextprotocol/rust-sdk">The official Rust MCP SDK</a> (<code>rmcp</code>)</li>
+            </ul>
+            <h3>From the story</h3>
+            <ul>
+                <li><a href="https://github.com/modelcontextprotocol/registry/issues/1055">#1055</a>: Support crates.io as a package registry type</li>
+                <li><a href="https://github.com/modelcontextprotocol/registry/pull/1207">#1207</a>: cargo as a package registry type</li>
+                <li><a href="https://github.com/modelcontextprotocol/registry/pull/1511">#1511</a>: cargo in the schema examples</li>
+                <li><code>rust-faf-mcp</code>: <a href="https://github.com/Wolfe-Jam/rust-faf-mcp">GitHub</a> · <a href="https://crates.io/crates/rust-faf-mcp">crates.io</a> · <a href="https://www.npmjs.com/package/rust-faf-mcp">npm</a></li>
+                <li>The hosted Rust server: <code>https://mcpaas.live/rust/mcp/v1</code></li>
             </ul>
 
             <p class="checked">Numbers checked against the live registry API, the GitHub record, and the live servers on October 30, 2026.</p>
