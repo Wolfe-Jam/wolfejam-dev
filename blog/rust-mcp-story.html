@@ -129,9 +129,13 @@
             <p>He pointed to the registry's guide for adding a package type. That was the offer: here's how, go and do it.</p>
 
             <h2>The work</h2>
+            <p>Rado said yes on April 24. The pull request was up two days later, on April 26.</p>
             <p>The registry is written in Go, so the work was Go, not Rust. The guide has the steps: add the type to the <code>server.json</code> schema, write a validator, add tests and docs.</p>
-            <p>The validator is the heart of it. It proves ownership in two calls to crates.io's own API: ask where the crate's README lives, fetch it, and look for a line that says <code>mcp-name: &lt;your server's name&gt;</code>. Only the crate's owner can put that line there, so it proves the publisher owns the crate.</p>
-            <p><a href="https://github.com/modelcontextprotocol/registry/pull/1207">PR #1207</a> went up on April 26: 10 files, 671 lines added. A reviewer, P4ST4S, checked the two-call flow against live crates.io before it went further.</p>
+            <p>The validator proves ownership in two calls to crates.io's own API: ask where the crate's README lives, fetch it, and look for a line that says <code>mcp-name: &lt;your server's name&gt;</code>. Only the crate's owner can put that line there.</p>
+            <p>Most of the work was testing. The validator is 160 lines of Go. The tests beside it are 411, and they run against the real crates.io, not a mock. Well-known crates like <code>serde</code>, <code>tokio</code> and <code>rand</code> have to be rejected, because they carry no <code>mcp-name</code> line. Four kinds of wrong registry address have to be refused. Server names in every format the registry allows have to pass.</p>
+            <p>The proof was a real server. I had built <code>rust-faf-mcp</code> in early March, so the validator had something live to check, and shipping it found a trap that only cargo has: crates.io strips HTML comments when it renders a README. The hidden <code>mcp-name</code> line that works on PyPI and NuGet simply vanishes. Version 0.3.0 went out with an invisible token; 0.3.1 fixed it, and the registry's docs now warn every cargo author about it.</p>
+            <p>Then five weeks of review. P4ST4S checked the two-call flow against live crates.io and asked for more: a self-contained positive test, a live test anchored on a real published crate, and proper handling when crates.io itself has an error. By June 1 every point was answered: 19 of 19 cargo tests passing, the lint clean, 10 files and 671 lines including the docs.</p>
+            <p>It was also my first contribution to the registry: someone from outside adding a whole new package type to the official one. That takes some nerve. Rado knows what went into it.</p>
 
             <h2>The merge</h2>
             <p>Rado merged #1207 on June 3. The next two days he hardened it himself: a safer README fetch, clearer status handling and stronger tests (#1330, #1331).</p>
