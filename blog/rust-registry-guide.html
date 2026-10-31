@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Listing a Rust MCP server in the official MCP Registry — WOLFE ∞ JAMES</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="apple-touch-icon" href="/favicon.png">
+    <meta name="description" content="How to list a Rust MCP server in the official MCP Registry as a cargo package: the name, the README line, server.json, publishing, and the gotchas.">
+    <meta name="author" content="James | wolfejam">
+    <link rel="canonical" href="https://wolfejam.dev/blog/rust-registry-guide">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://wolfejam.dev/blog/rust-registry-guide">
+    <meta property="og:title" content="Listing a Rust MCP server in the official MCP Registry — WOLFE ∞ JAMES">
+    <meta property="og:description" content="How to list a Rust MCP server in the official MCP Registry as a cargo package: the name, the README line, server.json, publishing, and the gotchas.">
+    <meta property="og:image" content="https://wolfejam.dev/blog/og-rust-guide.png">
+    <meta name="twitter:image" content="https://wolfejam.dev/blog/og-rust-guide.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <script>
+        // Same theme key as the home page, set before paint.
+        try { document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light'); } catch (e) {}
+    </script>
+    <style>
+        :root {
+            --bg-primary: #fefcf8;
+            --bg-secondary: #f9f6f1;
+            --text-primary: #1a1a1a;
+            --text-secondary: #4a4a4a;
+            --text-muted: #7a7a7a;
+            --accent: #E74C3C;
+            --accent-hover: #C0392B;
+            --faf: #FF6B35;
+            --faf-hover: #e55a2b;
+            --service: #E74C3C;
+            --service-hover: #C0392B;
+            --border: #e5e5e5;
+            --code-bg: #f5f5f5;
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #0f0f0f;
+            --bg-secondary: #1a1a1a;
+            --text-primary: #f5f5f5;
+            --text-secondary: #d0d0d0;
+            --text-muted: #a0a0a0;
+            --accent: #E74C3C;
+            --accent-hover: #ff7b6e;
+            --faf: #FF6B35;
+            --faf-hover: #ff8a5c;
+            --service: #E74C3C;
+            --service-hover: #ff7b6e;
+            --border: #333333;
+            --code-bg: #262626;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background: var(--bg-primary);
+        }
+
+        .container { max-width: 760px; margin: 0 auto; padding: 0 24px; }
+
+        header { padding: 24px 0; border-bottom: 1px solid var(--border); background: var(--bg-primary); position: sticky; top: 0; z-index: 100; }
+        header .container { max-width: 1200px; }
+        nav { display: flex; justify-content: space-between; align-items: center; }
+        .logo, .logo:hover { font-size: 24px; font-weight: 700; color: var(--text-primary); text-decoration: none; }
+        .logo .car { font-size: 34px; line-height: 1; vertical-align: -0.12em; }
+        .nav-right { display: flex; align-items: center; gap: 12px; }
+        .nav-sep { color: var(--text-muted); font-size: 15px; }
+        .nav-link { color: var(--text-primary); font-weight: 600; font-size: 15px; text-decoration: none; }
+        .nav-link:hover, .nav-link:focus-visible { text-decoration: underline; text-underline-offset: 6px; }
+        .nav-link.active { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 6px; }
+        .nav-worth-it { font-size: 26px; line-height: 1; text-decoration: none; }
+        a.faf { color: var(--faf); }
+        a.faf:hover { color: var(--faf-hover); }
+        main { padding: 48px 0 64px; }
+        h1 { font-size: 2rem; letter-spacing: 0.02em; }
+        .intro { color: var(--text-secondary); margin-top: 8px; }
+
+        .week { margin-top: 48px; padding-top: 32px; border-top: 1px solid var(--border); }
+        .week h2 { font-size: 1.35rem; }
+        .week h2 a { color: inherit; text-decoration: none; }
+        .week .range { color: var(--text-muted); font-size: 0.95rem; }
+        .week h3 { font-size: 1rem; margin: 24px 0 8px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-secondary); }
+        .week ul { list-style: none; }
+        .week li { padding: 10px 0 10px 16px; border-left: 3px solid var(--accent); margin-bottom: 10px; background: var(--bg-secondary); border-radius: 0 6px 6px 0; padding-right: 12px; }
+        .week li strong { color: var(--text-primary); }
+        .week li .sub { display: block; color: var(--text-secondary); font-size: 0.95rem; margin-top: 2px; }
+
+        a { color: var(--text-primary); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+        a:hover { color: var(--text-secondary); }
+        a.service { color: var(--service); font-weight: 600; }
+        a.service:hover { color: var(--service-hover); }
+        code { background: var(--code-bg); color: var(--text-primary); padding: 1px 6px; border-radius: 4px; font-size: 0.9em; overflow-wrap: anywhere; }
+
+        .door { margin-top: 56px; padding: 20px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-secondary); }
+        .door p { color: var(--text-secondary); }
+        .more { margin-top: 48px; color: var(--text-secondary); }
+        .credit { margin-top: 24px; color: var(--text-muted); font-size: 0.85rem; }
+    
+        .post-list { list-style: none; margin-top: 32px; }
+        .post-list li { padding: 20px 0; border-top: 1px solid var(--border); }
+        .post-list a.title { font-size: 1.25rem; font-weight: 700; color: var(--text-primary); text-decoration: none; }
+        .post-list a.title:hover { color: var(--accent); }
+        .post-list .meta, .byline { color: var(--text-muted); font-size: 0.9rem; }
+        .post-list .summary { color: var(--text-secondary); margin-top: 4px; }
+
+        article h1 { font-size: 2.1rem; line-height: 1.2; }
+        article .subtitle { color: var(--text-secondary); font-size: 1.15rem; margin-top: 8px; }
+        article .byline { margin-top: 12px; }
+        article h2 { font-size: 1.3rem; margin: 40px 0 12px; }
+        article p { margin: 0 0 16px; color: var(--text-primary); }
+        article ul { margin: 0 0 16px 22px; }
+        article li { margin-bottom: 8px; }
+        article blockquote { margin: 16px 0; padding: 12px 18px; border-left: 3px solid var(--accent); background: var(--bg-secondary); border-radius: 0 6px 6px 0; color: var(--text-secondary); font-style: italic; }
+        article .closer { font-size: 1.15rem; font-weight: 700; margin-top: 8px; }
+        main.post { padding-top: 80px; }
+        article h3 { font-size: 1rem; margin: 20px 0 8px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-secondary); }
+        article .checked { color: var(--text-muted); font-size: 0.9rem; margin-top: 32px; }
+
+        /* WolfejamGizmo - Signature half-moon theme toggle */
+        .wolfejam-gizmo {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 48px;
+            height: 48px;
+            padding: 0;
+            background: transparent;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            outline: none;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+
+        .wolfejam-gizmo__gradient {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #FFF 50%, #121212 50%);
+            transition: transform 0.3s ease;
+            border-radius: 50%;
+        }
+
+        .wolfejam-gizmo__gradient--dark {
+            transform: rotate(180deg);
+        }
+
+        .wolfejam-gizmo:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 16px rgba(0, 255, 255, 0.3);
+        }
+
+        .wolfejam-gizmo:active {
+            transform: scale(0.95);
+        }
+
+        .wolfejam-gizmo:focus {
+            outline: 2px solid #00FFFF;
+            outline-offset: 2px;
+        }
+
+        .wolfejam-gizmo:focus:not(:focus-visible) {
+            outline: none;
+        }
+
+        .wolfejam-gizmo__tooltip {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-bottom: 8px;
+            background: #fffccc;
+            color: #000;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            white-space: nowrap;
+            pointer-events: none;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .wolfejam-gizmo:hover .wolfejam-gizmo__tooltip {
+            opacity: 1;
+        }
+
+        .wolfejam-gizmo__tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+            border-top: 4px solid #fffccc;
+        }
+        @media (max-width: 520px) {
+            header { padding: 16px 0; }
+            .logo { font-size: 17px; white-space: nowrap; }
+            .logo .car { font-size: 24px; }
+            .nav-right { gap: 9px; }
+            .nav-link, .nav-shipped { font-size: 14px; }
+            .nav-sep { display: none; }
+            .nav-worth-it { font-size: 22px; }
+        }
+        .cm { margin: 20px 0; padding: 10px 16px; border-left: 2px solid var(--border); font-family: "SF Mono", Menlo, Monaco, monospace; font-size: 0.86rem; line-height: 1.55; color: var(--text-secondary); }
+        .cm .ln { display: block; position: relative; padding-left: 3.2ch; }
+        .cm .ln::before { content: "//"; position: absolute; left: 0; }
+        .cm .ln.cont { padding-left: calc(3.2ch + var(--lab, 0ch)); }
+        .cm b { color: var(--text-primary); font-weight: 700; }
+        .cm.gotcha { border-left-color: var(--faf); }
+        .cm.gotcha b { color: var(--faf); }
+        .cm.tried { border-left-style: dashed; }
+        pre.code { margin: 16px 0; padding: 16px 18px; background: var(--code-bg); border-radius: 8px; overflow-x: auto; font-family: "SF Mono", Menlo, Monaco, monospace; font-size: 0.86rem; line-height: 1.55; }
+        pre.code .c { color: var(--text-muted); }
+        pre.code .hl { background: rgba(255, 107, 53, 0.18); border-radius: 3px; padding: 1px 2px; }
+        .file { font-family: "SF Mono", Menlo, monospace; font-size: 0.78rem; color: var(--text-muted); margin: 20px 0 -10px; }
+        @media (max-width: 480px) { pre.code, .cm { font-size: 0.8rem; } }
+    </style>
+</head>
+<body>
+    <!-- WolfejamGizmo - Signature theme toggle (same as the home page) -->
+    <button class="wolfejam-gizmo" id="themeToggle" aria-label="Toggle theme">
+        <div class="wolfejam-gizmo__gradient" id="themeGradient"></div>
+        <div class="wolfejam-gizmo__tooltip" id="themeTooltip">WolfeJam's Gizmo</div>
+    </button>
+    <header>
+        <nav class="container">
+            <a href="/" class="logo"><span class="car">🏎️</span>✨ wolfejam.dev</a>
+            <div class="nav-right">
+                <a href="/blog" class="nav-link active" aria-current="page">Blog</a>
+                <span class="nav-sep" aria-hidden="true">|</span>
+                <a href="/shipped" class="nav-link">Shipped</a>
+                <span class="nav-sep" aria-hidden="true">|</span>
+                <a href="/info" class="nav-link">Info</a>
+                <span class="nav-sep" aria-hidden="true">|</span>
+                <a href="/#worth-it" class="nav-worth-it" aria-label="Worth-It Service">🧰</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container post">
+        <article>
+            <h1>Listing a Rust MCP server in the official MCP Registry</h1>
+            <p class="subtitle">A cargo package, a README line, and one JSON file</p>
+            <p class="byline">Guide · Nov 1, 2026 · <a href="/blog">Blog</a></p>
+
+            <p>Since July 13, the official MCP Registry accepts Rust servers published to crates.io as <code>cargo</code> packages. Clients can then install them the Rust way: <code>cargo install</code>. This guide walks through listing one, step by step, including the parts the docs leave out.</p>
+            <p>The comments in this guide are the dev talk: <code>WHY</code> explains, <code>NOTE</code> adds detail, <code>GOTCHA</code> marks a trap, <code>TRIED</code> is what I learned the hard way.</p>
+
+            <h2>1. Before you start</h2>
+            <ul>
+                <li>A Rust MCP server that runs over stdio, on crates.io or ready for it.</li>
+                <li>A GitHub account.</li>
+                <li><code>mcp-publisher</code>, the registry's own CLI.</li>
+            </ul>
+            <p class="file">terminal</p>
+<pre class="code">brew install mcp-publisher
+
+# or the release binary (macOS, Linux)
+curl -L &quot;https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_$(uname -s | tr &#x27;[:upper:]&#x27; &#x27;[:lower:]&#x27;)_$(uname -m | sed &#x27;s/x86_64/amd64/;s/aarch64/arm64/&#x27;).tar.gz&quot; | tar xz mcp-publisher &amp;&amp; sudo mv mcp-publisher /usr/local/bin/</pre>
+            <div class="cm" style="--lab:6ch"><span class="ln"><b>NOTE:</b> run mcp-publisher --help and look for validate and status in the list.</span><span class="ln cont">Older builds don&#x27;t have them, and this guide uses both.</span></div>
+
+            <h2>2. Pick your server name</h2>
+            <p>A server name is a namespace, a slash, and a name. If you log in with GitHub, your namespace is <code>io.github.</code> plus your username:</p>
+<pre class="code">io.github.you/widget</pre>
+            <div class="cm" style="--lab:5ch"><span class="ln"><b>WHY:</b> the registry only lets you publish names in a namespace you&#x27;ve proved you own.</span><span class="ln cont">GitHub login proves io.github.&lt;your-username&gt;.</span></div>
+            <div class="cm gotcha" style="--lab:8ch"><span class="ln"><b>GOTCHA:</b> publishing under a GitHub org?</span><span class="ln cont">The usual login can&#x27;t do it yet: it only grants your personal namespace (registry issue #1468).</span><span class="ln cont">You need to be an org Owner, then publish from GitHub Actions, or log in with a token that has read:org.</span></div>
+            <div class="cm" style="--lab:6ch"><span class="ln"><b>NOTE:</b> own a domain?</span><span class="ln cont">DNS login gives you names like com.example/widget instead.</span></div>
+
+            <h2>3. Put the <code>mcp-name:</code> line in your README</h2>
+            <p>This one line is how the registry knows the crate is yours. The registry docs suggest a bullet near your links:</p>
+            <p class="file">README.md</p>
+<pre class="code"># Widget MCP Server
+
+A Rust MCP server for widgets.
+
+- `<span class="hl">mcp-name: io.github.you/widget</span>`</pre>
+            <div class="cm" style="--lab:5ch"><span class="ln"><b>WHY:</b> crates.io renders your README to HTML on its CDN.</span><span class="ln cont">The registry fetches that page and looks for the line.</span><span class="ln cont">Only the crate&#x27;s owner can publish that README, so finding the line is the proof.</span></div>
+            <div class="cm gotcha" style="--lab:8ch"><span class="ln"><b>GOTCHA:</b> don&#x27;t hide it in an HTML comment.</span><span class="ln cont">&lt;!-- mcp-name: ... --&gt; works on PyPI and NuGet, but crates.io strips HTML comments when it renders, so the registry never sees it.</span><span class="ln cont">Use visible text.</span></div>
+            <div class="cm gotcha" style="--lab:8ch"><span class="ln"><b>GOTCHA:</b> the line is checked in the README of the exact crate version you list.</span><span class="ln cont">That README is fixed when you cargo publish.</span><span class="ln cont">Forgot the line?</span><span class="ln cont">You&#x27;ll need to publish a new crate version.</span></div>
+            <div class="cm" style="--lab:6ch"><span class="ln"><b>NOTE:</b> the name has to end where your name ends. mcp-name: io.github.you/widget does not match inside io.github.you/widget-pro.</span><span class="ln cont">Backticks are fine.</span></div>
+            <div class="cm tried" style="--lab:7ch"><span class="ln"><b>TRIED:</b> [James, in your words: something that didn&#x27;t work, and what it taught you.</span><span class="ln cont">Only you can write this one.]</span></div>
+
+            <h2>4. Write <code>server.json</code></h2>
+            <p><code>mcp-publisher init</code> writes a starting file. In a Rust project, it needs editing:</p>
+            <div class="cm gotcha" style="--lab:8ch"><span class="ln"><b>GOTCHA:</b> init reads package.json, not Cargo.toml.</span><span class="ln cont">In a Rust repo it writes an npm entry with placeholders and a sample API-key variable.</span><span class="ln cont">Change it to match the file below.</span></div>
+            <p class="file">server.json</p>
+<pre class="code">{
+  &quot;$schema&quot;: &quot;https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json&quot;,
+  &quot;name&quot;: &quot;io.github.you/widget&quot;,
+  &quot;title&quot;: &quot;Widget&quot;,
+  &quot;description&quot;: &quot;A Rust MCP server for widgets&quot;,
+  &quot;version&quot;: &quot;0.3.0&quot;,
+  &quot;packages&quot;: [
+    {
+      <span class="hl">&quot;registryType&quot;: &quot;cargo&quot;</span>,
+      &quot;identifier&quot;: &quot;widget&quot;,
+      &quot;version&quot;: &quot;0.3.0&quot;,
+      &quot;transport&quot;: { &quot;type&quot;: &quot;stdio&quot; }
+    }
+  ]
+}</pre>
+            <div class="cm" style="--lab:6ch"><span class="ln"><b>NOTE:</b> identifier is your crate name. version is required for cargo: it says which crate version to check.</span><span class="ln cont">Keep it equal to the top-level version.</span></div>
+            <div class="cm" style="--lab:6ch"><span class="ln"><b>NOTE:</b> no runtimeHint for cargo. npm has npx, PyPI has uvx; cargo has no per-run runner.</span><span class="ln cont">Users cargo install once; the client runs the binary.</span></div>
+            <p>Then check the file before you publish:</p>
+            <p class="file">terminal</p>
+<pre class="code">mcp-publisher validate</pre>
+            <div class="cm gotcha" style="--lab:8ch"><span class="ln"><b>GOTCHA:</b> validate checks the shape, not ownership.</span><span class="ln cont">It doesn&#x27;t fetch your README.</span><span class="ln cont">I pointed it at a crate with no mcp-name line and got &quot;server.json is valid&quot;.</span><span class="ln cont">The real check comes at publish.</span></div>
+
+            <h2>5. Publish the crate, then the listing</h2>
+            <p class="file">terminal</p>
+<pre class="code">cargo publish
+mcp-publisher login github
+mcp-publisher publish</pre>
+            <div class="cm" style="--lab:5ch"><span class="ln"><b>WHY:</b> the order matters.</span><span class="ln cont">The registry checks the README that crates.io already serves, so the crate goes first, then the listing.</span></div>
+            <div class="cm" style="--lab:6ch"><span class="ln"><b>NOTE:</b> login github prints a code.</span><span class="ln cont">Enter it at github.com/login/device, then come back.</span></div>
+            <div class="cm gotcha" style="--lab:8ch"><span class="ln"><b>GOTCHA:</b> a published version is final.</span><span class="ln cont">You can&#x27;t change it or publish it again.</span><span class="ln cont">A mistake means a new version number.</span></div>
+            <div class="cm" style="--lab:6ch"><span class="ln"><b>NOTE:</b> crates.io sometimes rate-limits the check (429, or a 5xx).</span><span class="ln cont">The error says it&#x27;s likely temporary.</span><span class="ln cont">Wait, then publish again.</span></div>
+
+            <h2>6. Check it's listed</h2>
+            <p class="file">terminal</p>
+<pre class="code">curl &quot;https://registry.modelcontextprotocol.io/v0.1/servers?search=io.github.you/widget&amp;version=latest&quot;</pre>
+            <div class="cm" style="--lab:6ch"><span class="ln"><b>NOTE:</b> without version=latest, search returns every version you have ever published.</span></div>
+            <div class="cm" style="--lab:6ch"><span class="ln"><b>NOTE:</b> the listing&#x27;s status (active or deprecated) is in _meta, under io.modelcontextprotocol.registry/official.</span></div>
+
+            <h2>7. Optional: npm and mcpb</h2>
+            <p><code>packages</code> is a list, so one server can ship several ways. Some Rust servers list cargo and npm together.</p>
+            <ul>
+                <li><strong>npm</strong>: put <code>"mcpName": "io.github.you/widget"</code> in <code>package.json</code>. No README line needed.</li>
+                <li><strong>mcpb</strong>: a prebuilt binary from GitHub or GitLab Releases. The URL must contain <code>mcp</code>, and the entry needs a <code>fileSha256</code> (<code>openssl dgst -sha256 widget.mcpb</code>).</li>
+            </ul>
+            <div class="cm" style="--lab:5ch"><span class="ln"><b>WHY:</b> cargo builds from source, so your users need Rust installed (rustup). mcpb needs no toolchain.</span><span class="ln cont">The registry docs leave the choice to you.</span></div>
+            <div class="cm" style="--lab:6ch"><span class="ln"><b>NOTE:</b> a cargo entry must not have fileSha256; the registry rejects it.</span><span class="ln cont">That field is mcpb only.</span></div>
+
+            <h2>8. Keep it current</h2>
+            <p>For each release: publish the new crate version (the README line still in it), bump both <code>version</code> fields in <code>server.json</code>, then <code>mcp-publisher publish</code>.</p>
+            <p>To retire an old version:</p>
+            <p class="file">terminal</p>
+<pre class="code">mcp-publisher status --status deprecated \
+  --message &quot;Please upgrade to 0.4.0&quot; \
+  io.github.you/widget 0.3.0</pre>
+            <div class="cm" style="--lab:6ch"><span class="ln"><b>NOTE:</b> flags go before the name and version. --all-versions changes every version at once.</span></div>
+            <p>To publish from CI instead, the registry has a <a href="https://modelcontextprotocol.io/registry/github-actions">GitHub Actions guide</a>. Its examples use npm; the registry steps are the same.</p>
+
+            <h2>Links</h2>
+            <ul>
+                <li><a href="https://modelcontextprotocol.io/registry/package-types#cargo-rust-packages">Registry docs: Cargo (Rust) packages</a></li>
+                <li><a href="https://modelcontextprotocol.io/registry/quickstart">Registry docs: Quickstart</a></li>
+                <li><a href="https://modelcontextprotocol.io/registry/authentication">Registry docs: Authentication</a></li>
+                <li><a href="https://modelcontextprotocol.io/registry/versioning">Registry docs: Versioning</a></li>
+                <li><a href="/blog/rust-mcp-story">An MCP Story about Rust: how cargo got in</a></li>
+                <li><a href="https://github.com/Wolfe-Jam/rust-mcp-census">The Rust MCP Census</a></li>
+            </ul>
+
+            <p class="checked">Checked against the registry docs and source, and mcp-publisher v1.8.7, on October 31, 2026.</p>
+        </article>
+
+        <p class="more">More about me and my work: <a href="/info">wolfejam.dev/info</a></p>
+
+        <p class="credit">— Drafted by Claude · Edited by James Wolfe</p>
+    </main>
+    <script>
+        // WolfejamGizmo: same key as the home page, so the choice carries across the site.
+        (function () {
+            const html = document.documentElement;
+            const toggle = document.getElementById('themeToggle');
+            const gradient = document.getElementById('themeGradient');
+            const show = (t) => gradient.classList.toggle('wolfejam-gizmo__gradient--dark', t === 'dark');
+            show(html.getAttribute('data-theme'));
+            toggle.addEventListener('click', () => {
+                const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+                html.setAttribute('data-theme', next);
+                try { localStorage.setItem('theme', next); } catch (e) {}
+                show(next);
+            });
+        })();
+    </script>
+</body>
+</html>
