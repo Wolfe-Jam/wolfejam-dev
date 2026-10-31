@@ -1,0 +1,4 @@
+# The old /landing page was retired 2026-10-30 (tag archive/landing-page). Its visitors go to /info.
+/landing       /info  301
+/landing/      /info  301
+/landing.html  /info  301
