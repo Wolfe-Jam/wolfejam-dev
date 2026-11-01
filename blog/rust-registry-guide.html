@@ -297,6 +297,7 @@ A Rust MCP server for widgets.
             <h2>4. Write <code>server.json</code></h2>
             <p><code>mcp-publisher init</code> writes a starting file. In a Rust project, it needs editing:</p>
             <div class="cm gotcha" style="--lab:8ch"><span class="ln"><b>GOTCHA:</b> init reads package.json, not Cargo.toml.</span><span class="ln cont">In a Rust repo it writes an npm entry with placeholders and a sample API-key variable.</span><span class="ln cont">Change it to match the file below.</span></div>
+            <div class="cm" style="--lab:6ch"><span class="ln"><b>NOTE:</b> init takes the name from your git remote.</span><span class="ln cont">With no remote, it writes com.example/&lt;folder&gt;.</span><span class="ln cont">Change it to your io.github name.</span></div>
             <p class="file">server.json</p>
 <pre class="code">{
   &quot;$schema&quot;: &quot;https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json&quot;,
