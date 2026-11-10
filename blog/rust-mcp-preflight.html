@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Rust MCP Preflight: check a registry listing before you publish — WOLFE ∞ JAMES</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="apple-touch-icon" href="/favicon.png">
+    <meta name="description" content="Rust MCP Preflight runs the MCP Registry's publish checks before you publish: the README line on crates.io, server.json, the server name, and now the DNS or HTTP key for a domain namespace.">
+    <meta name="author" content="James | wolfejam">
+    <link rel="canonical" href="https://wolfejam.dev/blog/rust-mcp-preflight">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://wolfejam.dev/blog/rust-mcp-preflight">
+    <meta property="og:title" content="Rust MCP Preflight: check a registry listing before you publish — WOLFE ∞ JAMES">
+    <meta property="og:description" content="Rust MCP Preflight runs the MCP Registry's publish checks before you publish: the README line on crates.io, server.json, the server name, and now the DNS or HTTP key for a domain namespace.">
+    <meta property="og:image" content="https://wolfejam.dev/blog/og-rust-mcp-preflight.png">
+    <meta name="twitter:image" content="https://wolfejam.dev/blog/og-rust-mcp-preflight.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <script>
+        // Same theme key as the home page, set before paint.
+        try { document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light'); } catch (e) {}
+    </script>
+    <style>
+        :root {
+            --bg-primary: #fefcf8;
+            --bg-secondary: #f9f6f1;
+            --text-primary: #1a1a1a;
+            --text-secondary: #4a4a4a;
+            --text-muted: #7a7a7a;
+            --accent: #E74C3C;
+            --accent-hover: #C0392B;
+            --faf: #FF6B35;
+            --faf-hover: #e55a2b;
+            --service: #E74C3C;
+            --service-hover: #C0392B;
+            --border: #e5e5e5;
+            --code-bg: #f5f5f5;
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #0f0f0f;
+            --bg-secondary: #1a1a1a;
+            --text-primary: #f5f5f5;
+            --text-secondary: #d0d0d0;
+            --text-muted: #a0a0a0;
+            --accent: #E74C3C;
+            --accent-hover: #ff7b6e;
+            --faf: #FF6B35;
+            --faf-hover: #ff8a5c;
+            --service: #E74C3C;
+            --service-hover: #ff7b6e;
+            --border: #333333;
+            --code-bg: #262626;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background: var(--bg-primary);
+        }
+
+        .container { max-width: 760px; margin: 0 auto; padding: 0 24px; }
+
+        header { padding: 24px 0; border-bottom: 1px solid var(--border); background: var(--bg-primary); position: sticky; top: 0; z-index: 100; }
+        header .container { max-width: 1200px; }
+        nav { display: flex; justify-content: space-between; align-items: center; }
+        .logo, .logo:hover { font-size: 24px; font-weight: 700; color: var(--text-primary); text-decoration: none; }
+        .logo .car { font-size: 34px; line-height: 1; vertical-align: -0.12em; }
+        .nav-right { display: flex; align-items: center; gap: 12px; }
+        .nav-sep { color: var(--text-muted); font-size: 15px; }
+        .nav-link { color: var(--text-primary); font-weight: 600; font-size: 15px; text-decoration: none; }
+        .nav-link:hover, .nav-link:focus-visible { text-decoration: underline; text-underline-offset: 6px; }
+        .nav-link.active { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 6px; }
+        .nav-worth-it { font-size: 26px; line-height: 1; text-decoration: none; }
+        a.faf { color: var(--faf); }
+        a.faf:hover { color: var(--faf-hover); }
+        main { padding: 48px 0 64px; }
+        h1 { font-size: 2rem; letter-spacing: 0.02em; }
+        .intro { color: var(--text-secondary); margin-top: 8px; }
+
+        .week { margin-top: 48px; padding-top: 32px; border-top: 1px solid var(--border); }
+        .week h2 { font-size: 1.35rem; }
+        .week h2 a { color: inherit; text-decoration: none; }
+        .week .range { color: var(--text-muted); font-size: 0.95rem; }
+        .week h3 { font-size: 1rem; margin: 24px 0 8px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-secondary); }
+        .week ul { list-style: none; }
+        .week li { padding: 10px 0 10px 16px; border-left: 3px solid var(--accent); margin-bottom: 10px; background: var(--bg-secondary); border-radius: 0 6px 6px 0; padding-right: 12px; }
+        .week li strong { color: var(--text-primary); }
+        .week li .sub { display: block; color: var(--text-secondary); font-size: 0.95rem; margin-top: 2px; }
+
+        a { color: var(--text-primary); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+        a:hover { color: var(--text-secondary); }
+        a.service { color: var(--service); font-weight: 600; }
+        a.service:hover { color: var(--service-hover); }
+        code { background: var(--code-bg); color: var(--text-primary); padding: 1px 6px; border-radius: 4px; font-size: 0.9em; overflow-wrap: anywhere; }
+
+        .door { margin-top: 56px; padding: 20px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-secondary); }
+        .door p { color: var(--text-secondary); }
+        .more { margin-top: 48px; color: var(--text-secondary); }
+        .credit { margin-top: 24px; color: var(--text-muted); font-size: 0.85rem; }
+    
+        .post-list { list-style: none; margin-top: 32px; }
+        .post-list li { padding: 20px 0; border-top: 1px solid var(--border); }
+        .post-list a.title { font-size: 1.25rem; font-weight: 700; color: var(--text-primary); text-decoration: none; }
+        .post-list a.title:hover { color: var(--accent); }
+        .post-list .meta, .byline { color: var(--text-muted); font-size: 0.9rem; }
+        .post-list .summary { color: var(--text-secondary); margin-top: 4px; }
+
+        article h1 { font-size: 2.1rem; line-height: 1.2; }
+        article .subtitle { color: var(--text-secondary); font-size: 1.15rem; margin-top: 8px; }
+        article .byline { margin-top: 12px; }
+        article h2 { font-size: 1.3rem; margin: 40px 0 12px; }
+        article p { margin: 0 0 16px; color: var(--text-primary); }
+        article ul { margin: 0 0 16px 22px; }
+        article li { margin-bottom: 8px; }
+        article blockquote { margin: 16px 0; padding: 12px 18px; border-left: 3px solid var(--accent); background: var(--bg-secondary); border-radius: 0 6px 6px 0; color: var(--text-secondary); font-style: italic; }
+        article .closer { font-size: 1.15rem; font-weight: 700; margin-top: 8px; }
+        main.post { padding-top: 80px; }
+        article h3 { font-size: 1rem; margin: 20px 0 8px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-secondary); }
+        article .checked { color: var(--text-muted); font-size: 0.9rem; margin-top: 32px; }
+
+        /* WolfejamGizmo - Signature half-moon theme toggle */
+        .wolfejam-gizmo {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 48px;
+            height: 48px;
+            padding: 0;
+            background: transparent;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            outline: none;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+
+        .wolfejam-gizmo__gradient {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #FFF 50%, #121212 50%);
+            transition: transform 0.3s ease;
+            border-radius: 50%;
+        }
+
+        .wolfejam-gizmo__gradient--dark {
+            transform: rotate(180deg);
+        }
+
+        .wolfejam-gizmo:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 16px rgba(0, 255, 255, 0.3);
+        }
+
+        .wolfejam-gizmo:active {
+            transform: scale(0.95);
+        }
+
+        .wolfejam-gizmo:focus {
+            outline: 2px solid #00FFFF;
+            outline-offset: 2px;
+        }
+
+        .wolfejam-gizmo:focus:not(:focus-visible) {
+            outline: none;
+        }
+
+        .wolfejam-gizmo__tooltip {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-bottom: 8px;
+            background: #fffccc;
+            color: #000;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            white-space: nowrap;
+            pointer-events: none;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .wolfejam-gizmo:hover .wolfejam-gizmo__tooltip {
+            opacity: 1;
+        }
+
+        .wolfejam-gizmo__tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+            border-top: 4px solid #fffccc;
+        }
+        @media (max-width: 520px) {
+            header { padding: 16px 0; }
+            .logo { font-size: 17px; white-space: nowrap; }
+            .logo .car { font-size: 24px; }
+            .nav-right { gap: 9px; }
+            .nav-link, .nav-shipped { font-size: 14px; }
+            .nav-sep { display: none; }
+            .nav-worth-it { font-size: 22px; }
+        }
+        .cm { margin: 20px 0; padding: 10px 16px; border-left: 2px solid var(--border); font-family: "SF Mono", Menlo, Monaco, monospace; font-size: 0.86rem; line-height: 1.55; color: var(--text-secondary); }
+        .cm .ln { display: block; position: relative; padding-left: 3.2ch; }
+        .cm .ln::before { content: "//"; position: absolute; left: 0; }
+        .cm .ln.cont { padding-left: calc(3.2ch + var(--lab, 0ch)); }
+        .cm b { color: var(--text-primary); font-weight: 700; }
+        .cm.gotcha { border-left-color: var(--faf); }
+        .cm.gotcha b { color: var(--faf); }
+        .cm.tried { border-left-style: dashed; }
+        pre.code { margin: 16px 0; padding: 16px 18px; background: var(--code-bg); border-radius: 8px; overflow-x: auto; font-family: "SF Mono", Menlo, Monaco, monospace; font-size: 0.86rem; line-height: 1.55; }
+        pre.code .c { color: var(--text-muted); }
+        pre.code .hl { background: rgba(255, 107, 53, 0.18); border-radius: 3px; padding: 1px 2px; }
+        .file { font-family: "SF Mono", Menlo, monospace; font-size: 0.78rem; color: var(--text-muted); margin: 20px 0 -10px; }
+        @media (max-width: 480px) { pre.code, .cm { font-size: 0.8rem; } }
+        .hero { margin: 24px 0 8px; border-radius: 8px; overflow: hidden; background: #1a1a1a; /* media frame */ }
+        .hero video { display: block; width: 100%; height: auto; }
+    </style>
+</head>
+<body>
+    <!-- WolfejamGizmo - Signature theme toggle (same as the home page) -->
+    <button class="wolfejam-gizmo" id="themeToggle" aria-label="Toggle theme">
+        <div class="wolfejam-gizmo__gradient" id="themeGradient"></div>
+        <div class="wolfejam-gizmo__tooltip" id="themeTooltip">WolfeJam's Gizmo</div>
+    </button>
+    <header>
+        <nav class="container">
+            <a href="/" class="logo"><span class="car">🏎️</span>✨ wolfejam.dev</a>
+            <div class="nav-right">
+                <a href="/blog" class="nav-link active" aria-current="page">Blog</a>
+                <span class="nav-sep" aria-hidden="true">|</span>
+                <a href="/shipped" class="nav-link">Shipped</a>
+                <span class="nav-sep" aria-hidden="true">|</span>
+                <a href="/info" class="nav-link">Info</a>
+                <span class="nav-sep" aria-hidden="true">|</span>
+                <a href="/#worth-it" class="nav-worth-it" aria-label="Worth-It Service">🧰</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container post">
+        <article>
+            <h1>Rust MCP Preflight</h1>
+            <p class="subtitle">Check an MCP Registry listing before you publish it</p>
+            <p class="byline">Tool · Nov 9, 2026 · <a href="/blog">Blog</a></p>
+
+            <div class="hero">
+                <video src="/blog/rust-mcp-preflight.mp4" poster="/blog/og-rust-mcp-preflight.png" autoplay muted loop playsinline aria-label="Rust MCP Preflight: a terminal prints PASS mcp-name on crates.io, then FAIL latest is reserved"></video>
+            </div>
+
+            <p><code>mcp-publisher validate</code> checks the shape of <code>server.json</code>. It doesn't check that the registry will accept your server. That happens at <code>mcp-publisher publish</code>, and for a Rust server it comes after <code>cargo publish</code>, when the crate version on crates.io is final. A missing README line at that point costs a new version number.</p>
+            <p>Rust MCP Preflight runs the registry's publish checks first. It's a CLI for your terminal or CI, and an MCP server your agent can call.</p>
+
+            <h2>What it checks</h2>
+            <ul>
+                <li><strong>The README line.</strong> It fetches the README crates.io serves for that exact crate version and looks for <code>mcp-name: &lt;your server name&gt;</code>, matched the way the registry matches it. It catches the line hidden in an HTML comment (crates.io strips comments), the line glued to the next word, and the wrong case.</li>
+                <li><strong>server.json.</strong> The rules publish applies: <code>$schema</code>, the name, exact package versions (no <code>latest</code>, no ranges), the transport, and for cargo packages no <code>fileSha256</code>.</li>
+                <li><strong>The server name.</strong> The name rules, whether it's already listed, and which login its namespace needs, including GitHub organizations, which <code>login github</code> can't publish to yet.</li>
+                <li><strong>The namespace login</strong> (new in 0.2.0). For a domain namespace such as <code>com.example/widget</code>: is a public key published where <code>mcp-publisher login dns</code> or <code>login http</code> will look, and would the registry accept it?</li>
+            </ul>
+
+            <h2>New in 0.2.0: the namespace login</h2>
+            <p>A domain namespace proves you own the domain with a key: a <code>v=MCPv1; k=…; p=…</code> TXT record, or the same line at <code>https://&lt;domain&gt;/.well-known/mcp-registry-auth</code>. Until now the first thing to check it was <code>mcp-publisher login</code> itself. Preflight reads it before you log in, with the registry's own rules:</p>
+            <ul>
+                <li>DNS at the domain or a parent domain; HTTP only at that exact domain, with no redirects and at most 4096 bytes.</li>
+                <li>Ed25519 and ECDSA P-384 keys parsed as the registry parses them, down to Go's whitespace and base64 rules.</li>
+                <li>A record left at <code>_mcp-auth.</code> or <code>_mcp-registry.</code> named, with where to move it.</li>
+            </ul>
+            <p class="file">rust-mcp-preflight 0.2.0 · check_name com.example/widget</p>
+<pre class="code">Server name
+  FAIL  namespace com.example: no published key for `mcp-publisher login dns`
+        or `login http`. Add a TXT record `v=MCPv1; k=ed25519; p=&lt;public key&gt;`
+        at the apex of example.com (DNS also works from a parent domain), or
+        serve it at https://example.com/.well-known/mcp-registry-auth.
+        https://modelcontextprotocol.io/registry/authentication
+  PASS  com.example/widget isn't listed yet: first publish
+
+Not ready: 1 failure(s), 0 warning(s).</pre>
+            <p>With a key in place, the same check prints PASS, the <code>mcp-publisher login</code> command that will work, and the key's fingerprint. Preflight can't see your private key, so when publish says a signature doesn't verify, compare that fingerprint with yours.</p>
+            <div class="cm" style="--lab:6ch"><span class="ln"><b>NOTE:</b> if DNS can't be read (offline, a timeout), the check fails and says the login wasn't checked.</span><span class="ln cont">A CI run never passes on a key it didn't see.</span></div>
+
+            <h2>Try it</h2>
+            <p class="file">terminal</p>
+<pre class="code"><span class="c"># prebuilt (needs cargo-binstall): Linux, macOS, Windows</span>
+cargo binstall rust-mcp-preflight
+
+<span class="c"># or from source (Rust 1.88 or newer, a few minutes)</span>
+cargo install rust-mcp-preflight
+
+rust-mcp-preflight server.json</pre>
+            <p>It exits 0 when ready, 1 if anything fails, and 2 if the file can't be read. To give it to an agent, run it with no arguments as a stdio MCP server, for example <code>claude mcp add preflight -- rust-mcp-preflight</code>. The <a href="https://github.com/Wolfe-Jam/rust-mcp-preflight#use-it-from-an-mcp-client">README</a> has setup for goose, VS Code and Cursor too.</p>
+
+            <h2>How it was checked</h2>
+            <p>Every rule is ported from the registry's source, not its docs: the cargo validator, and for 0.2.0 the auth handlers (<code>common.go</code>, <code>dns.go</code>, <code>http.go</code>). The 58 tests run on stable Rust and on 1.88, the minimum version. The namespace check was run against published servers in three separate samples (15, 19 and 11 domain namespaces), and each result matched what the registry decides.</p>
+            <p>0.2.0 also had two outside reviews before merge, then a second round on the fixes. The second round caught a mistake in the first round of fixes. A reviewer had suggested a warning, not a failure, when DNS can't be read, and I took it. In this tool a warning means Ready, exit 0, so an offline CI run would have passed a namespace it never checked. It's a failure now, with every reason and a note to run again.</p>
+            <div class="cm tried" style="--lab:7ch"><span class="ln"><b>TRIED:</b> a fix from a review is new code. It gets reviewed too.</span></div>
+
+            <h2>Where it fits</h2>
+            <p><code>cargo publish</code> (with the README line), then <code>rust-mcp-preflight server.json</code>, then <code>mcp-publisher login</code> and <code>mcp-publisher publish</code>. The full walk-through is <a href="/blog/rust-registry-guide">Listing a Rust MCP server in the official MCP Registry</a>.</p>
+
+            <h2>Links</h2>
+            <ul>
+                <li><a href="https://github.com/Wolfe-Jam/rust-mcp-preflight">github.com/Wolfe-Jam/rust-mcp-preflight</a> (MIT)</li>
+                <li><a href="https://crates.io/crates/rust-mcp-preflight">crates.io/crates/rust-mcp-preflight</a></li>
+                <li><a href="https://github.com/Wolfe-Jam/rust-mcp-preflight/blob/main/CHANGELOG.md">CHANGELOG</a></li>
+                <li><a href="https://github.com/modelcontextprotocol/registry/tree/main/internal/api/handlers/v0/auth">The registry's auth handlers</a>, which the namespace check ports</li>
+                <li><a href="/blog/rust-mcp-story">An MCP Story about Rust: how cargo got in</a></li>
+            </ul>
+
+            <p class="checked">Checked against rust-mcp-preflight 0.2.0 and the registry source at commit c9fe19b, on November 9, 2026.</p>
+        </article>
+
+        <p class="more">More about me and my work: <a href="/info">wolfejam.dev/info</a></p>
+
+        <p class="credit">— Drafted by Claude · Approved by James Wolfe</p>
+    </main>
+    <script>
+        // WolfejamGizmo: same key as the home page, so the choice carries across the site.
+        (function () {
+            const html = document.documentElement;
+            const toggle = document.getElementById('themeToggle');
+            const gradient = document.getElementById('themeGradient');
+            const show = (t) => gradient.classList.toggle('wolfejam-gizmo__gradient--dark', t === 'dark');
+            show(html.getAttribute('data-theme'));
+            toggle.addEventListener('click', () => {
+                const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+                html.setAttribute('data-theme', next);
+                try { localStorage.setItem('theme', next); } catch (e) {}
+                show(next);
+            });
+        })();
+    </script>
+</body>
+</html>
