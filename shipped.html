@@ -221,6 +221,66 @@
         <p class="intro">Open-standards work, each week: MCP and AI Catalog tooling, conformance proposals, and contributions to AAIF projects. Newest first.</p>
 
         <!-- New week: copy this section to the top, Friday to Thursday. -->
+        <!-- Cloudflare rewrites name@version as an email: keep the @ in its own <span>@</span>. -->
+        <section class="week" id="2026-11-15">
+            <h2><a href="#2026-11-15">Nov 15, 2026</a></h2>
+            <p class="range">Fri Nov 6 – Sun Nov 15</p>
+
+            <h3>Released</h3>
+            <ul>
+                <li>
+                    <strong>rust-mcp-preflight v0.2.3</strong>
+                    <span class="sub">Checks an MCP Registry listing before you publish: the crates.io README line, server.json's publish rules, the server name and its namespace login.</span>
+                    <span class="sub">Why: the registry checks these when you publish, after the crate is already on crates.io. Preflight checks them first.</span>
+                    <span class="sub">New: the namespace login check (0.2.0) reads the DNS or HTTP key for a domain namespace the way the registry does. 0.2.3 is back in step with the registry: every published key counts, and a temporary failure fetching the HTTP key is tried once more.</span>
+                    <span class="sub"><code>cargo install rust-mcp-preflight</code> · <a href="/blog/rust-mcp-preflight">post</a> · <a href="https://github.com/Wolfe-Jam/rust-mcp-preflight/releases/tag/v0.2.3">notes</a></span>
+                </li>
+                <li>
+                    <strong>mcp-better v0.6.0</strong>
+                    <span class="sub">A modern MCP server setup for MCP 2026-07-28, written as a textbook: Rust, rmcp, stdio.</span>
+                    <span class="sub">Why: a textbook that claims a spec should pass that spec's own tests.</span>
+                    <span class="sub">New: CI runs the official MCP conformance suite. Cache hints come back on every list and read, and the server declares only what it answers.</span>
+                    <span class="sub"><code>npx mcp-better</code> · <a href="https://github.com/Wolfe-Jam/mcp-better">repo</a></span>
+                </li>
+                <li>
+                    <strong>mcp-context-card v1.9.6</strong>
+                    <span class="sub">Makes a project's context (AGENTS.md), memory and identity discoverable to any MCP client, through the Server Card <code>_meta</code> block and ai-catalog.json.</span>
+                    <span class="sub">New: speaks MCP 2026-07-28 on the SDK v2 (1.8.0). One command, three surfaces: the mini card in an MCP Apps host, Markdown everywhere else (1.9.0). Its AGENTS.md authoring now uses agents-md-facts 0.2.0 (1.9.6).</span>
+                    <span class="sub"><code>npx mcp-context-card card</code> · <a href="https://github.com/Wolfe-Jam/mcp-context-card">repo</a></span>
+                </li>
+                <li>
+                    <strong>agents-md-facts v0.2.2</strong>
+                    <span class="sub">Authors a minimal AGENTS.md from your repo's facts. Never guessed.</span>
+                    <span class="sub">New: 0.2.0 keeps everything 0.1.0 authored and adds to it, read from what the repo declares. 0.2.2: a Rust repo's title and version come from Cargo.toml.</span>
+                    <span class="sub"><code>npx agents-md-facts --dry-run</code> · <a href="https://github.com/Wolfe-Jam/agents-md-facts">repo</a></span>
+                </li>
+            </ul>
+
+            <h3>Written</h3>
+            <ul>
+                <li>
+                    <strong>Rust MCP Preflight</strong>
+                    <span class="sub">Check an MCP Registry listing before you publish it. Nov 9.</span>
+                    <span class="sub"><a href="/blog/rust-mcp-preflight">Read it</a></span>
+                </li>
+            </ul>
+
+            <h3>Contributed</h3>
+            <ul>
+                <li>
+                    <strong>goose #11695: a scheduled recipe can run more than once for the same cron occurrence</strong>
+                    <span class="sub">A reproduction for the maintainers.</span>
+                    <span class="sub"><a href="https://github.com/aaif-goose/goose/issues/11695#issuecomment-6691527111">Read it</a></span>
+                </li>
+                <li>
+                    <strong>AAIF Ambassador: Rust MCP Preflight</strong>
+                    <span class="sub">Submitted as an MCP project contribution. Scored 25.</span>
+                </li>
+            </ul>
+
+            <p class="range">Catch-up, Oct 23 – Nov 5: Rust MCP Preflight launched (0.1.0, Nov 1). <a href="/blog/rust-mcp-story">An MCP Story about Rust</a> (Oct 30) and <a href="/blog/rust-registry-guide">the registry guide</a> (Nov 1) went up, and <a href="https://github.com/Wolfe-Jam/rust-mcp-census">the Rust MCP census</a> went public. goose: verified <a href="https://github.com/aaif-goose/goose/issues/12614#issuecomment-6645514377">#12614</a> and <a href="https://github.com/aaif-goose/goose/issues/12613#issuecomment-6650240652">#12613</a>. AAIF: the story and the guide scored 15 and 20.</p>
+        </section>
+
         <section class="week" id="2026-10-23">
             <h2><a href="#2026-10-23">Oct 23, 2026</a></h2>
             <p class="range">Fri Oct 16 – Thu Oct 22</p>
@@ -232,7 +292,7 @@
                     <span class="sub">v0.4.1: Catalog checks re-read against the AI Catalog spec, after an independent review. Verdicts change.</span>
                     <span class="sub">v0.4.0: A browser entry, for extensions and Workers. No verdict changes.</span>
                     <span class="sub">v0.3.4: Width suite, parts 3 and 4: comparing versions on live endpoints, and parity (no parity bug found; the tests keep it that way).</span>
-                    <span class="sub"><code>npx mcp-server-card-check@0.4.1 &lt;mcp-url&gt;</code> · <a href="https://servercard.wolfejam.dev">in the browser</a> · <a href="https://github.com/Wolfe-Jam/mcp-server-card-check/releases/tag/v0.4.1">notes</a></span>
+                    <span class="sub"><code>npx mcp-server-card-check<span>@</span>0.4.1 &lt;mcp-url&gt;</code> · <a href="https://servercard.wolfejam.dev">in the browser</a> · <a href="https://github.com/Wolfe-Jam/mcp-server-card-check/releases/tag/v0.4.1">notes</a></span>
                 </li>
             </ul>
 
