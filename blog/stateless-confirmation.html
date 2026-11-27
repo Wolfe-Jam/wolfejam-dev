@@ -277,7 +277,7 @@
             <p class="byline">Guide · Nov 27, 2026 · <a href="/blog">Blog</a></p>
 
             <p>Some tools should ask before they act: delete, pay, send. On MCP's 2026-07-28 protocol a server can pause a tool call and ask the user, in the middle of the call, without holding a connection open. The catch is that the server keeps no session. Whatever it needs to remember between the question and the answer has to travel with the client, in a token called <code>requestState</code>.</p>
-            <p>I teach this pattern in <a href="https://github.com/Wolfe-Jam/mcp-better">mcp-better</a>, a Rust MCP server written as a textbook. Its <code>confirm_echo</code> tool asks you to type CONFIRM, then echoes your message. A raw HTTP test of version 0.7.0 found that the confirmation promised more than it delivered. Version 0.8.0 adds an expiry and refuses a changed message, and says plainly what it still doesn't do. Every response below is a real capture from those two versions.</p>
+            <p><a href="https://github.com/Wolfe-Jam/mcp-better">mcp-better</a> teaches this pattern: it is a Rust MCP server written as a textbook. Its <code>confirm_echo</code> tool asks you to type CONFIRM, then echoes your message. A raw HTTP test of version 0.7.0 found that the confirmation promised more than it delivered. Version 0.8.0 adds an expiry and refuses a changed message, and says plainly what it still doesn't do. Every response below is a real capture from those two versions.</p>
 
             <h2>1. Two round trips, no session</h2>
             <p>This is SEP-2322, multi round-trip requests. Round 1 is an ordinary tool call:</p>
