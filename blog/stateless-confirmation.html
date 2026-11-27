@@ -243,6 +243,7 @@
         .vs > div { min-width: 0; }
         .vs .k { font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: -8px; }
         @media (max-width: 640px) { .vs { grid-template-columns: 1fr; } }
+        .vs.stack { grid-template-columns: 1fr; }
         table.t { border-collapse: collapse; width: 100%; margin: 16px 0; font-size: 0.92rem; }
         table.t th, table.t td { border-bottom: 1px solid var(--border); padding: 8px 6px; text-align: left; vertical-align: top; }
         table.t th { color: var(--text-secondary); font-weight: 600; }
@@ -317,7 +318,7 @@
         }
       }
     },
-    &quot;requestState&quot;: &quot;rs1.AAABohveDBN7Im1lc3NhZ2UiOiJjb25maXJtIG1lIn0.sEgJTcgy3dI6341xIRsGjf7IIuu-hxPkkoDbDwylF-M&quot;
+    &quot;requestState&quot;: &quot;rs1.AAABohveDBN7…DwylF-M&quot;
   }
 }</pre>
             <p>The client shows the form, then sends the same call again with the answer and the same token:</p>
@@ -331,7 +332,7 @@
     &quot;arguments&quot;: {
       &quot;message&quot;: &quot;confirm me&quot;
     },
-    &quot;requestState&quot;: &quot;rs1.AAABohveDBN7Im1lc3NhZ2UiOiJjb25maXJtIG1lIn0.sEgJTcgy3dI6341xIRsGjf7IIuu-hxPkkoDbDwylF-M&quot;,
+    &quot;requestState&quot;: &quot;rs1.AAABohveDBN7…DwylF-M&quot;,
     &quot;inputResponses&quot;: {
       &quot;confirm&quot;: {
         &quot;action&quot;: &quot;accept&quot;,
@@ -352,7 +353,7 @@
     &quot;content&quot;: [
       {
         &quot;type&quot;: &quot;text&quot;,
-        &quot;text&quot;: &quot;{\&quot;confirmed\&quot;:true,\&quot;echo\&quot;:\&quot;confirm me\&quot;,\&quot;mrtr\&quot;:\&quot;confirm_echo\&quot;,\&quot;resultType\&quot;:\&quot;complete\&quot;}&quot;
+        &quot;text&quot;: &quot;{\&quot;confirmed\&quot;:true,\&quot;echo\&quot;:\&quot;confirm me\&quot;,…}&quot;
       }
     ],
     &quot;isError&quot;: false
@@ -386,9 +387,13 @@
   }
 }</pre>
             <p>But look inside the token. A client must not; an attacker will. The middle part is base64url, and it decodes to plain JSON:</p>
-<pre class="code"><span class="c"># 0.8.0's token, middle part decoded</span>
-rs1.AAABohveDBN7Im1lc3NhZ2UiOiJjb25maXJtIG1lIn0.sEgJTcgy3dI6341xIRsGjf7IIuu-hxPkkoDbDwylF-M
-  → [8-byte expiry] {&quot;message&quot;:&quot;confirm me&quot;}</pre>
+<pre class="code"><span class="c"># 0.8.0's token, split at its dots</span>
+rs1
+.AAABohveDBN7Im1lc3NhZ2UiOiJjb25maXJtIG1lIn0
+.sEgJTcgy3dI6341xIRsGjf7IIuu-hxPkkoDbDwylF-M
+
+<span class="c"># the middle part, decoded</span>
+[8-byte expiry] {&quot;message&quot;:&quot;confirm me&quot;}</pre>
             <figure class="dia"><svg viewBox="0 0 720 210" role="img" aria-label="Token anatomy: rs1, a dot, then base64url of an 8-byte expiry plus the JSON state, a dot, then the HMAC tag. The middle is readable by anyone; the tag only proves it wasn't changed.">
 <text class="ink mono" x="20" y="40" font-size="15">rs1</text><text class="mut mono" x="58" y="40" font-size="15">.</text>
 <rect x="70" y="18" width="452" height="34" rx="6" class="red" opacity="0.13"/>
@@ -443,7 +448,8 @@ rs1.AAABohveDBN7Im1lc3NhZ2UiOiJjb25maXJtIG1lIn0.sEgJTcgy3dI6341xIRsGjf7IIuu-hxPk
             <p>A test that doesn't wait five minutes: build the server with a 1 ms lifetime, sleep 20 ms, expect the error.</p>
 <pre class="code">#[test]
 fn confirm_echo_rejects_expired_state() {
-    let server = BetterServer::new().with_confirm_ttl(std::time::Duration::from_millis(1));
+    let server = BetterServer::new()
+        .with_confirm_ttl(std::time::Duration::from_millis(1));
     let sealed = round1_state(&amp;server, &quot;late&quot;);
     std::thread::sleep(std::time::Duration::from_millis(20));
     let req = confirm_args(&quot;late&quot;)
@@ -479,7 +485,7 @@ fn confirm_echo_rejects_expired_state() {
 
             <h2>5. Refuse changed arguments</h2>
             <p>Round 2 carries the arguments again. What if they changed? In 0.7.0 the server used the sealed message and ignored the new one. Safe, since the user's confirmed text won, but the caller was told "done" for something it didn't send:</p>
-            <div class="vs">
+            <div class="vs stack">
                 <div><p class="k">0.7.0 · round 2 with "SWAPPED"</p><pre class="code">{
   &quot;confirmed&quot;: true,
   &quot;echo&quot;: &quot;confirm me&quot;,
