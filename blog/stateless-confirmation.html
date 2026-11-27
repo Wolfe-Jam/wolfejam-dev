@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>A confirmation with no session — WOLFE ∞ JAMES</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="apple-touch-icon" href="/favicon.png">
+    <meta name="description" content="What a sealed requestState can and can't promise on MCP 2026-07-28: signed not secret, an expiry, the replay window, refusing changed arguments and one error for every bad token. Real wire captures from mcp-better 0.7.0 and 0.8.0.">
+    <meta name="author" content="James | wolfejam">
+    <link rel="canonical" href="https://wolfejam.dev/blog/stateless-confirmation">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://wolfejam.dev/blog/stateless-confirmation">
+    <meta property="og:title" content="A confirmation with no session — WOLFE ∞ JAMES">
+    <meta property="og:description" content="What a sealed requestState can and can't promise on MCP 2026-07-28: signed not secret, an expiry, the replay window, refusing changed arguments and one error for every bad token. Real wire captures from mcp-better 0.7.0 and 0.8.0.">
+    <meta property="og:image" content="https://wolfejam.dev/blog/og-stateless-confirmation.png">
+    <meta name="twitter:image" content="https://wolfejam.dev/blog/og-stateless-confirmation.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <script>
+        // Same theme key as the home page, set before paint.
+        try { document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light'); } catch (e) {}
+    </script>
+    <style>
+        :root {
+            --bg-primary: #fefcf8;
+            --bg-secondary: #f9f6f1;
+            --text-primary: #1a1a1a;
+            --text-secondary: #4a4a4a;
+            --text-muted: #7a7a7a;
+            --accent: #E74C3C;
+            --accent-hover: #C0392B;
+            --faf: #FF6B35;
+            --faf-hover: #e55a2b;
+            --service: #E74C3C;
+            --service-hover: #C0392B;
+            --border: #e5e5e5;
+            --code-bg: #f5f5f5;
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #0f0f0f;
+            --bg-secondary: #1a1a1a;
+            --text-primary: #f5f5f5;
+            --text-secondary: #d0d0d0;
+            --text-muted: #a0a0a0;
+            --accent: #E74C3C;
+            --accent-hover: #ff7b6e;
+            --faf: #FF6B35;
+            --faf-hover: #ff8a5c;
+            --service: #E74C3C;
+            --service-hover: #ff7b6e;
+            --border: #333333;
+            --code-bg: #262626;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background: var(--bg-primary);
+        }
+
+        .container { max-width: 760px; margin: 0 auto; padding: 0 24px; }
+
+        header { padding: 24px 0; border-bottom: 1px solid var(--border); background: var(--bg-primary); position: sticky; top: 0; z-index: 100; }
+        header .container { max-width: 1200px; }
+        nav { display: flex; justify-content: space-between; align-items: center; }
+        .logo, .logo:hover { font-size: 24px; font-weight: 700; color: var(--text-primary); text-decoration: none; }
+        .logo .car { font-size: 34px; line-height: 1; vertical-align: -0.12em; }
+        .nav-right { display: flex; align-items: center; gap: 12px; }
+        .nav-sep { color: var(--text-muted); font-size: 15px; }
+        .nav-link { color: var(--text-primary); font-weight: 600; font-size: 15px; text-decoration: none; }
+        .nav-link:hover, .nav-link:focus-visible { text-decoration: underline; text-underline-offset: 6px; }
+        .nav-link.active { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 6px; }
+        .nav-worth-it { font-size: 26px; line-height: 1; text-decoration: none; }
+        a.faf { color: var(--faf); }
+        a.faf:hover { color: var(--faf-hover); }
+        main { padding: 48px 0 64px; }
+        h1 { font-size: 2rem; letter-spacing: 0.02em; }
+        .intro { color: var(--text-secondary); margin-top: 8px; }
+
+        .week { margin-top: 48px; padding-top: 32px; border-top: 1px solid var(--border); }
+        .week h2 { font-size: 1.35rem; }
+        .week h2 a { color: inherit; text-decoration: none; }
+        .week .range { color: var(--text-muted); font-size: 0.95rem; }
+        .week h3 { font-size: 1rem; margin: 24px 0 8px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-secondary); }
+        .week ul { list-style: none; }
+        .week li { padding: 10px 0 10px 16px; border-left: 3px solid var(--accent); margin-bottom: 10px; background: var(--bg-secondary); border-radius: 0 6px 6px 0; padding-right: 12px; }
+        .week li strong { color: var(--text-primary); }
+        .week li .sub { display: block; color: var(--text-secondary); font-size: 0.95rem; margin-top: 2px; }
+
+        a { color: var(--text-primary); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+        a:hover { color: var(--text-secondary); }
+        a.service { color: var(--service); font-weight: 600; }
+        a.service:hover { color: var(--service-hover); }
+        code { background: var(--code-bg); color: var(--text-primary); padding: 1px 6px; border-radius: 4px; font-size: 0.9em; overflow-wrap: anywhere; }
+
+        .door { margin-top: 56px; padding: 20px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-secondary); }
+        .door p { color: var(--text-secondary); }
+        .more { margin-top: 48px; color: var(--text-secondary); }
+        .credit { margin-top: 24px; color: var(--text-muted); font-size: 0.85rem; }
+    
+        .post-list { list-style: none; margin-top: 32px; }
+        .post-list li { padding: 20px 0; border-top: 1px solid var(--border); }
+        .post-list a.title { font-size: 1.25rem; font-weight: 700; color: var(--text-primary); text-decoration: none; }
+        .post-list a.title:hover { color: var(--accent); }
+        .post-list .meta, .byline { color: var(--text-muted); font-size: 0.9rem; }
+        .post-list .summary { color: var(--text-secondary); margin-top: 4px; }
+
+        article h1 { font-size: 2.1rem; line-height: 1.2; }
+        article .subtitle { color: var(--text-secondary); font-size: 1.15rem; margin-top: 8px; }
+        article .byline { margin-top: 12px; }
+        article h2 { font-size: 1.3rem; margin: 40px 0 12px; }
+        article p { margin: 0 0 16px; color: var(--text-primary); }
+        article ul { margin: 0 0 16px 22px; }
+        article li { margin-bottom: 8px; }
+        article blockquote { margin: 16px 0; padding: 12px 18px; border-left: 3px solid var(--accent); background: var(--bg-secondary); border-radius: 0 6px 6px 0; color: var(--text-secondary); font-style: italic; }
+        article .closer { font-size: 1.15rem; font-weight: 700; margin-top: 8px; }
+        main.post { padding-top: 80px; }
+        article h3 { font-size: 1rem; margin: 20px 0 8px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-secondary); }
+        article .checked { color: var(--text-muted); font-size: 0.9rem; margin-top: 32px; }
+
+        /* WolfejamGizmo - Signature half-moon theme toggle */
+        .wolfejam-gizmo {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 48px;
+            height: 48px;
+            padding: 0;
+            background: transparent;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            outline: none;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+
+        .wolfejam-gizmo__gradient {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #FFF 50%, #121212 50%);
+            transition: transform 0.3s ease;
+            border-radius: 50%;
+        }
+
+        .wolfejam-gizmo__gradient--dark {
+            transform: rotate(180deg);
+        }
+
+        .wolfejam-gizmo:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 16px rgba(0, 255, 255, 0.3);
+        }
+
+        .wolfejam-gizmo:active {
+            transform: scale(0.95);
+        }
+
+        .wolfejam-gizmo:focus {
+            outline: 2px solid #00FFFF;
+            outline-offset: 2px;
+        }
+
+        .wolfejam-gizmo:focus:not(:focus-visible) {
+            outline: none;
+        }
+
+        .wolfejam-gizmo__tooltip {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-bottom: 8px;
+            background: #fffccc;
+            color: #000;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            white-space: nowrap;
+            pointer-events: none;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .wolfejam-gizmo:hover .wolfejam-gizmo__tooltip {
+            opacity: 1;
+        }
+
+        .wolfejam-gizmo__tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+            border-top: 4px solid #fffccc;
+        }
+        @media (max-width: 520px) {
+            header { padding: 16px 0; }
+            .logo { font-size: 17px; white-space: nowrap; }
+            .logo .car { font-size: 24px; }
+            .nav-right { gap: 9px; }
+            .nav-link, .nav-shipped { font-size: 14px; }
+            .nav-sep { display: none; }
+            .nav-worth-it { font-size: 22px; }
+        }
+        .cm { margin: 20px 0; padding: 10px 16px; border-left: 2px solid var(--border); font-family: "SF Mono", Menlo, Monaco, monospace; font-size: 0.86rem; line-height: 1.55; color: var(--text-secondary); }
+        .cm .ln { display: block; position: relative; padding-left: 3.2ch; }
+        .cm .ln::before { content: "//"; position: absolute; left: 0; }
+        .cm .ln.cont { padding-left: calc(3.2ch + var(--lab, 0ch)); }
+        .cm b { color: var(--text-primary); font-weight: 700; }
+        .cm.gotcha { border-left-color: var(--faf); }
+        .cm.gotcha b { color: var(--faf); }
+        .cm.tried { border-left-style: dashed; }
+        pre.code { margin: 16px 0; padding: 16px 18px; background: var(--code-bg); border-radius: 8px; overflow-x: auto; font-family: "SF Mono", Menlo, Monaco, monospace; font-size: 0.86rem; line-height: 1.55; }
+        pre.code .c { color: var(--text-muted); }
+        pre.code .hl { background: rgba(255, 107, 53, 0.18); border-radius: 3px; padding: 1px 2px; }
+        .file { font-family: "SF Mono", Menlo, monospace; font-size: 0.78rem; color: var(--text-muted); margin: 20px 0 -10px; }
+        @media (max-width: 480px) { pre.code, .cm { font-size: 0.8rem; } }
+        figure.dia { margin: 24px 0; }
+        figure.dia svg { width: 100%; height: auto; display: block; }
+        figure.dia figcaption { color: var(--text-muted); font-size: 0.85rem; margin-top: 6px; }
+        .dia .box { fill: var(--bg-secondary); stroke: var(--border); }
+        .dia .ink { fill: var(--text-primary); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+        .dia .mut { fill: var(--text-muted); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+        .dia .mono { font-family: "SF Mono", Menlo, monospace; }
+        .dia .line { stroke: var(--text-secondary); fill: none; }
+        .dia .red { fill: var(--accent); }
+        .dia .redline { stroke: var(--accent); fill: none; }
+        .dia .ok { fill: #2e9d5b; }
+        .vs { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; }
+        .vs > div { min-width: 0; }
+        .vs .k { font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: -8px; }
+        @media (max-width: 640px) { .vs { grid-template-columns: 1fr; } }
+        table.t { border-collapse: collapse; width: 100%; margin: 16px 0; font-size: 0.92rem; }
+        table.t th, table.t td { border-bottom: 1px solid var(--border); padding: 8px 6px; text-align: left; vertical-align: top; }
+        table.t th { color: var(--text-secondary); font-weight: 600; }
+    </style>
+</head>
+<body>
+    <!-- WolfejamGizmo - Signature theme toggle (same as the home page) -->
+    <button class="wolfejam-gizmo" id="themeToggle" aria-label="Toggle theme">
+        <div class="wolfejam-gizmo__gradient" id="themeGradient"></div>
+        <div class="wolfejam-gizmo__tooltip" id="themeTooltip">WolfeJam's Gizmo</div>
+    </button>
+    <header>
+        <nav class="container">
+            <a href="/" class="logo"><span class="car">🏎️</span>✨ wolfejam.dev</a>
+            <div class="nav-right">
+                <a href="/blog" class="nav-link active" aria-current="page">Blog</a>
+                <span class="nav-sep" aria-hidden="true">|</span>
+                <a href="/shipped" class="nav-link">Shipped</a>
+                <span class="nav-sep" aria-hidden="true">|</span>
+                <a href="/info" class="nav-link">Info</a>
+                <span class="nav-sep" aria-hidden="true">|</span>
+                <a href="/#worth-it" class="nav-worth-it" aria-label="Worth-It Service">🧰</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container post">
+        <article>
+            <h1>A confirmation with no session</h1>
+            <p class="subtitle">What a sealed <code>requestState</code> can and can't promise on MCP 2026-07-28</p>
+            <p class="byline">Guide · Nov 27, 2026 · <a href="/blog">Blog</a></p>
+
+            <p>Some tools should ask before they act: delete, pay, send. On MCP's 2026-07-28 protocol a server can pause a tool call and ask the user, in the middle of the call, without holding a connection open. The catch is that the server keeps no session. Whatever it needs to remember between the question and the answer has to travel with the client, in a token called <code>requestState</code>.</p>
+            <p>I teach this pattern in <a href="https://github.com/Wolfe-Jam/mcp-better">mcp-better</a>, a Rust MCP server written as a textbook. Its <code>confirm_echo</code> tool asks you to type CONFIRM, then echoes your message. A raw HTTP test of version 0.7.0 found that the confirmation promised more than it delivered. Version 0.8.0 adds an expiry and refuses a changed message, and says plainly what it still doesn't do. Every response below is a real capture from those two versions.</p>
+
+            <h2>1. Two round trips, no session</h2>
+            <p>This is SEP-2322, multi round-trip requests. Round 1 is an ordinary tool call:</p>
+            <p class="file">round 1 · request</p>
+<pre class="code">{
+  &quot;jsonrpc&quot;: &quot;2.0&quot;,
+  &quot;id&quot;: 1,
+  &quot;method&quot;: &quot;tools/call&quot;,
+  &quot;params&quot;: {
+    &quot;name&quot;: &quot;confirm_echo&quot;,
+    &quot;arguments&quot;: {
+      &quot;message&quot;: &quot;confirm me&quot;
+    },
+    &quot;_meta&quot;: {
+      &quot;io.modelcontextprotocol/protocolVersion&quot;: &quot;2026-07-28&quot;,
+      &quot;io.modelcontextprotocol/clientCapabilities&quot;: {
+        &quot;elicitation&quot;: {
+          &quot;form&quot;: {}
+        }
+      }
+    }
+  }
+}</pre>
+            <p>The server doesn't run the tool. It answers <code>input_required</code>, says what it needs (a form asking for CONFIRM), and hands back a sealed token:</p>
+            <p class="file">round 1 · response (mcp-better 0.8.0, schema trimmed)</p>
+<pre class="code">{
+  &quot;jsonrpc&quot;: &quot;2.0&quot;,
+  &quot;id&quot;: 1,
+  &quot;result&quot;: {
+    &quot;resultType&quot;: &quot;input_required&quot;,
+    &quot;inputRequests&quot;: {
+      &quot;confirm&quot;: {
+        &quot;method&quot;: &quot;elicitation/create&quot;,
+        &quot;params&quot;: {
+          &quot;message&quot;: &quot;Type CONFIRM to echo the sealed message.&quot;,
+          &quot;mode&quot;: &quot;form&quot;,
+          &quot;requestedSchema&quot;: &quot;…&quot;
+        }
+      }
+    },
+    &quot;requestState&quot;: &quot;rs1.AAABohveDBN7Im1lc3NhZ2UiOiJjb25maXJtIG1lIn0.sEgJTcgy3dI6341xIRsGjf7IIuu-hxPkkoDbDwylF-M&quot;
+  }
+}</pre>
+            <p>The client shows the form, then sends the same call again with the answer and the same token:</p>
+            <p class="file">round 2 · request</p>
+<pre class="code">{
+  &quot;jsonrpc&quot;: &quot;2.0&quot;,
+  &quot;id&quot;: 2,
+  &quot;method&quot;: &quot;tools/call&quot;,
+  &quot;params&quot;: {
+    &quot;name&quot;: &quot;confirm_echo&quot;,
+    &quot;arguments&quot;: {
+      &quot;message&quot;: &quot;confirm me&quot;
+    },
+    &quot;requestState&quot;: &quot;rs1.AAABohveDBN7Im1lc3NhZ2UiOiJjb25maXJtIG1lIn0.sEgJTcgy3dI6341xIRsGjf7IIuu-hxPkkoDbDwylF-M&quot;,
+    &quot;inputResponses&quot;: {
+      &quot;confirm&quot;: {
+        &quot;action&quot;: &quot;accept&quot;,
+        &quot;content&quot;: {
+          &quot;confirm&quot;: &quot;CONFIRM&quot;
+        }
+      }
+    },
+    &quot;_meta&quot;: &quot;…&quot;
+  }
+}</pre>
+            <p class="file">round 2 · response</p>
+<pre class="code">{
+  &quot;jsonrpc&quot;: &quot;2.0&quot;,
+  &quot;id&quot;: 2,
+  &quot;result&quot;: {
+    &quot;resultType&quot;: &quot;complete&quot;,
+    &quot;content&quot;: [
+      {
+        &quot;type&quot;: &quot;text&quot;,
+        &quot;text&quot;: &quot;{\&quot;confirmed\&quot;:true,\&quot;echo\&quot;:\&quot;confirm me\&quot;,\&quot;mrtr\&quot;:\&quot;confirm_echo\&quot;,\&quot;resultType\&quot;:\&quot;complete\&quot;}&quot;
+      }
+    ],
+    &quot;isError&quot;: false
+  }
+}</pre>
+            <figure class="dia"><svg viewBox="0 0 720 300" role="img" aria-label="Two round trips: round 1 returns input_required and a sealed requestState; the client asks the user, then retries the same call with the answer and the same requestState. The server keeps nothing between rounds.">
+<rect class="box" x="10" y="20" width="160" height="260" rx="10"/><text class="ink" x="90" y="48" text-anchor="middle" font-weight="700" font-size="16">Client</text><text class="mut" x="90" y="68" text-anchor="middle" font-size="12">holds the token</text>
+<rect class="box" x="550" y="20" width="160" height="260" rx="10"/><text class="ink" x="630" y="48" text-anchor="middle" font-weight="700" font-size="16">Server</text><text class="mut" x="630" y="68" text-anchor="middle" font-size="12">keeps nothing</text>
+<line class="line" x1="170" y1="100" x2="545" y2="100" stroke-width="2"/><polygon class="ink" points="545,95 555,100 545,105"/>
+<text class="ink mono" x="360" y="92" text-anchor="middle" font-size="13">1 · tools/call confirm_echo {message}</text>
+<line class="line" x1="175" y1="140" x2="550" y2="140" stroke-width="2"/><polygon class="ink" points="175,135 165,140 175,145"/>
+<text class="ink mono" x="360" y="132" text-anchor="middle" font-size="13">input_required + requestState</text>
+<rect x="250" y="148" width="220" height="24" rx="5" class="red" opacity="0.15"/><text class="ink mono" x="360" y="165" text-anchor="middle" font-size="12">rs1.&lt;expiry|state&gt;.&lt;tag&gt;</text>
+<text class="mut" x="90" y="190" text-anchor="middle" font-size="12">asks the user:</text><text class="ink" x="90" y="208" text-anchor="middle" font-size="13" font-weight="600">“Type CONFIRM”</text>
+<line class="line" x1="170" y1="240" x2="545" y2="240" stroke-width="2"/><polygon class="ink" points="545,235 555,240 545,245"/>
+<text class="ink mono" x="360" y="232" text-anchor="middle" font-size="13">2 · same call + answer + same requestState</text>
+<text class="mut" x="630" y="236" text-anchor="middle" font-size="12">opens and checks</text><text class="mut" x="630" y="252" text-anchor="middle" font-size="12">the token</text>
+<line class="line" x1="175" y1="268" x2="550" y2="268" stroke-width="2" stroke-dasharray="4 4"/><polygon class="ink" points="175,263 165,268 175,273"/>
+<text class="mut mono" x="360" y="288" text-anchor="middle" font-size="12">complete (or -32602)</text>
+</svg><figcaption>Two round trips, no session: everything round 2 needs travels in the token.</figcaption></figure>
+            <div class="cm" style="--lab:5ch"><span class="ln"><b>WHY:</b> the server can't trust anything in round 2 that it didn't seal in round 1. The client could send back anything.</span></div>
+
+            <h2>2. Signed, not secret</h2>
+            <p>mcp-better seals the token with rmcp's <code>RequestStateCodec</code>: an HMAC-SHA256 tag over the payload. Change one byte and round 2 fails:</p>
+<pre class="code">{
+  &quot;jsonrpc&quot;: &quot;2.0&quot;,
+  &quot;id&quot;: 5,
+  &quot;error&quot;: {
+    &quot;code&quot;: -32602,
+    &quot;message&quot;: &quot;requestState failed integrity check or expired (start again)&quot;
+  }
+}</pre>
+            <p>But look inside the token. A client must not; an attacker will. The middle part is base64url, and it decodes to plain JSON:</p>
+<pre class="code"><span class="c"># 0.8.0's token, middle part decoded</span>
+rs1.AAABohveDBN7Im1lc3NhZ2UiOiJjb25maXJtIG1lIn0.sEgJTcgy3dI6341xIRsGjf7IIuu-hxPkkoDbDwylF-M
+  → [8-byte expiry] {&quot;message&quot;:&quot;confirm me&quot;}</pre>
+            <figure class="dia"><svg viewBox="0 0 720 210" role="img" aria-label="Token anatomy: rs1, a dot, then base64url of an 8-byte expiry plus the JSON state, a dot, then the HMAC tag. The middle is readable by anyone; the tag only proves it wasn't changed.">
+<text class="ink mono" x="20" y="40" font-size="15">rs1</text><text class="mut mono" x="58" y="40" font-size="15">.</text>
+<rect x="70" y="18" width="452" height="34" rx="6" class="red" opacity="0.13"/>
+<text class="ink mono" x="84" y="40" font-size="15">[ expiry, 8 bytes ][ {"message":"confirm me"} ]</text>
+<text class="mut mono" x="528" y="40" font-size="15">.</text>
+<rect x="542" y="18" width="168" height="34" rx="6" class="box"/><text class="ink mono" x="552" y="40" font-size="15">HMAC-SHA256 tag</text>
+<text class="ink" x="296" y="78" text-anchor="middle" font-size="13" font-weight="600">base64url: anyone can read it</text>
+<text class="ink" x="626" y="78" text-anchor="middle" font-size="13" font-weight="600">proves it wasn't changed</text>
+<text class="mut" x="20" y="120" font-size="13">0.7.0 expiry:</text><text class="ink mono" x="130" y="120" font-size="13">00 00 00 00 00 00 00 00</text><text class="mut" x="360" y="120" font-size="13">zero = never expires</text>
+<text class="mut" x="20" y="148" font-size="13">0.8.0 expiry:</text><text class="ink mono" x="130" y="148" font-size="13">00 00 01 a2 1b de 0c 13</text><text class="mut" x="360" y="148" font-size="13">a time, in milliseconds, 5 minutes ahead</text>
+<text class="mut" x="20" y="186" font-size="12">Associated data (in mcp-better, the tool name) is mixed into the tag, not stored in the token.</text>
+</svg><figcaption>What a sealed requestState is. Signed, not secret.</figcaption></figure>
+            <div class="cm" style="--lab:6ch"><span class="ln"><b>NOTE:</b> rmcp's docs say it: &ldquo;Values are authenticated, not encrypted; key ids and payloads remain readable.&rdquo; Never put private data in it, or encrypt it.</span></div>
+
+            <h2>3. Give it an expiry</h2>
+            <p>In 0.7.0 the first 8 bytes of the payload were all zero: no expiry. Nothing marked a token as used either, because there's no session to mark. So one round-1 token completed round 2 again and again. Here it is, the same token sent twice to 0.7.0:</p>
+            <div class="vs">
+                <div><p class="k">first use</p><pre class="code">{
+  &quot;confirmed&quot;: true,
+  &quot;echo&quot;: &quot;confirm me&quot;,
+  &quot;mrtr&quot;: &quot;confirm_echo&quot;,
+  &quot;resultType&quot;: &quot;complete&quot;
+}</pre></div>
+                <div><p class="k">same token again</p><pre class="code">{
+  &quot;confirmed&quot;: true,
+  &quot;echo&quot;: &quot;confirm me&quot;,
+  &quot;mrtr&quot;: &quot;confirm_echo&quot;,
+  &quot;resultType&quot;: &quot;complete&quot;
+}</pre></div>
+            </div>
+            <p>rmcp can stamp an expiry into the token, and opening it after that fails. 0.8.0 seals every round-1 token with five minutes:</p>
+            <p class="file">src/server.rs · mcp-better 0.8.0</p>
+<pre class="code">let sealed = self
+    .state_codec
+    .seal_json_with(
+        &amp;ConfirmState { message: message.clone() },
+        &amp;SealOptions::new()
+            .associated_data(MRTR_AAD)
+            .ttl(self.confirm_ttl),
+    )
+    .map_err(|e| { /* … */ })?;</pre>
+            <p>After five minutes, round 2 is refused:</p>
+<p class="file">round 2 · a round-1 token, 305 seconds later</p>
+<pre class="code">{
+  &quot;jsonrpc&quot;: &quot;2.0&quot;,
+  &quot;id&quot;: 2,
+  &quot;error&quot;: {
+    &quot;code&quot;: -32602,
+    &quot;message&quot;: &quot;requestState failed integrity check or expired (start again)&quot;
+  }
+}</pre>
+            <p>A test that doesn't wait five minutes: build the server with a 1 ms lifetime, sleep 20 ms, expect the error.</p>
+<pre class="code">#[test]
+fn confirm_echo_rejects_expired_state() {
+    let server = BetterServer::new().with_confirm_ttl(std::time::Duration::from_millis(1));
+    let sealed = round1_state(&amp;server, &quot;late&quot;);
+    std::thread::sleep(std::time::Duration::from_millis(20));
+    let req = confirm_args(&quot;late&quot;)
+        .with_input_responses(accepted())
+        .with_request_state(sealed);
+    let err = server.confirm_echo_call(req, &amp;elicit_caps()).unwrap_err();
+    assert_eq!(err.code, ErrorCode::INVALID_PARAMS);
+}</pre>
+
+            <h2>4. Say what's left</h2>
+            <p>An expiry bounds replay. It doesn't stop it. Inside the five minutes, 0.8.0 still accepts the same token twice:</p>
+<pre class="code">{
+  &quot;confirmed&quot;: true,
+  &quot;echo&quot;: &quot;confirm me&quot;,
+  &quot;mrtr&quot;: &quot;confirm_echo&quot;,
+  &quot;resultType&quot;: &quot;complete&quot;
+}</pre>
+            <figure class="dia"><svg viewBox="0 0 720 190" role="img" aria-label="Timeline: round 1 seals the token at time zero. For five minutes, round 2 and any replay of the same token are accepted. After five minutes, every use is refused with -32602.">
+<line class="line" x1="40" y1="90" x2="690" y2="90" stroke-width="2"/>
+<rect x="40" y="56" width="420" height="28" rx="4" fill="#2e9d5b" opacity="0.16"/>
+<rect x="460" y="56" width="230" height="28" rx="4" class="red" opacity="0.16"/>
+<line class="redline" x1="460" y1="40" x2="460" y2="100" stroke-width="2"/>
+<text class="ink" x="40" y="44" font-size="13" font-weight="600">round 1 seals</text>
+<text class="ink" x="466" y="44" font-size="13" font-weight="600">+5 min</text>
+<text class="ink" x="250" y="75" text-anchor="middle" font-size="13">round 2 ✓ · replay ✓ · replay ✓</text>
+<text class="ink" x="575" y="75" text-anchor="middle" font-size="13">every use: -32602</text>
+<text class="mut" x="250" y="120" text-anchor="middle" font-size="12">the reuse window: an expiry bounds it, it doesn't close it</text>
+<text class="mut" x="575" y="120" text-anchor="middle" font-size="12">expired</text>
+<text class="mut" x="40" y="156" font-size="12">One-time use needs a nonce in the token and a used-set on the server.</text><text class="mut" x="40" y="174" font-size="12">That's state, which 2026-07-28 makes you choose on purpose.</text>
+</svg><figcaption>What an expiry buys, and what it doesn't.</figcaption></figure>
+            <p>For an echo, that's harmless. For a tool with real effects, it isn't: put a nonce in the sealed state and keep a set of used nonces on the server, at least until they expire. That is state, and keeping it is a choice 2026-07-28 makes you take on purpose. mcp-better doesn't, and its docs say so.</p>
+            <div class="cm gotcha" style="--lab:8ch"><span class="ln"><b>GOTCHA:</b> The spec says servers SHOULD seal three things into the state: the authenticated user, a short expiry, and the method plus a digest of its parameters. rmcp's associated data can carry the first and the last. mcp-better 0.8.0 has the expiry and binds only the tool name. A real server should bind the user and a digest of the call, so a token can't be replayed by someone else or against a different call.</span></div>
+
+            <h2>5. Refuse changed arguments</h2>
+            <p>Round 2 carries the arguments again. What if they changed? In 0.7.0 the server used the sealed message and ignored the new one. Safe, since the user's confirmed text won, but the caller was told "done" for something it didn't send:</p>
+            <div class="vs">
+                <div><p class="k">0.7.0 · round 2 with "SWAPPED"</p><pre class="code">{
+  &quot;confirmed&quot;: true,
+  &quot;echo&quot;: &quot;confirm me&quot;,
+  &quot;mrtr&quot;: &quot;confirm_echo&quot;,
+  &quot;resultType&quot;: &quot;complete&quot;
+}</pre></div>
+                <div><p class="k">0.8.0 · round 2 with "SWAPPED"</p><pre class="code">{
+  &quot;code&quot;: -32602,
+  &quot;message&quot;: &quot;message changed since round 1; start again to confirm the new one&quot;
+}</pre></div>
+            </div>
+            <p>The check is one <code>if</code>:</p>
+<pre class="code">// The sealed message is what the user confirmed.
+if message != state.message {
+    return Err(McpError::invalid_params(
+        &quot;message changed since round 1; start again to confirm the new one&quot;,
+        None,
+    ));
+}</pre>
+
+            <h2>6. One error for every bad token</h2>
+            <p>Tampered, sealed for another tool, expired: the client gets the same <code>-32602</code> for all three. The reason never leaves the server.</p>
+<pre class="code">let state: ConfirmState = self
+    .state_codec
+    .open_json_with(sealed, MRTR_AAD)
+    // One client-facing error for every failure (tampered, wrong tool,
+    // expired), as rmcp's `open_with` asks; the variant stays internal.
+    .map_err(|_| McpError::invalid_params(
+        &quot;requestState failed integrity check or expired (start again)&quot;,
+        None,
+    ))?;</pre>
+            <div class="cm" style="--lab:5ch"><span class="ln"><b>WHY:</b> rmcp's docs: applications MUST map all token-opening failures to a single client-facing error. A forger learns nothing about which check failed. The changed-message error is different on purpose: it only fires after the token opened cleanly, so it tells a forger nothing.</span></div>
+
+            <h2>7. Ask only clients that can answer</h2>
+            <p>Round 1 asks for a form, so it only makes sense for a client that declared it can show one. A client that didn't gets a clear refusal, naming what's missing, instead of a question it can't answer:</p>
+<pre class="code">{
+  &quot;jsonrpc&quot;: &quot;2.0&quot;,
+  &quot;id&quot;: 6,
+  &quot;error&quot;: {
+    &quot;code&quot;: -32021,
+    &quot;message&quot;: &quot;Missing required client capability&quot;,
+    &quot;data&quot;: {
+      &quot;requiredCapabilities&quot;: {
+        &quot;elicitation&quot;: {}
+      }
+    }
+  }
+}</pre>
+
+            <h2>The checklist</h2>
+            <table class="t">
+                <tr><th>#</th><th>Rule</th><th>In mcp-better 0.8.0</th></tr>
+                <tr><td>1</td><td>Seal the state; never trust echoed bytes</td><td>HMAC via rmcp <code>RequestStateCodec</code></td></tr>
+                <tr><td>2</td><td>Signed isn't secret</td><td>Only the message goes in, nothing private</td></tr>
+                <tr><td>3</td><td>Put an expiry on every token</td><td>5 minutes (<code>CONFIRM_STATE_TTL</code>)</td></tr>
+                <tr><td>4</td><td>Know your reuse window; add a nonce and a store for real effects</td><td>Stated, not built: it only echoes</td></tr>
+                <tr><td>5</td><td>Bind the token to who called and what they asked</td><td>Tool name only</td></tr>
+                <tr><td>6</td><td>Refuse changed arguments</td><td><code>-32602</code> "message changed since round 1"</td></tr>
+                <tr><td>7</td><td>One error for every failed open</td><td><code>-32602</code> for tampered, wrong tool, expired</td></tr>
+                <tr><td>8</td><td>Ask only clients that declared the capability</td><td><code>-32021</code> naming <code>elicitation</code></td></tr>
+            </table>
+
+            <h2>Try it</h2>
+<pre class="code">npx --yes mcp-better@0.8.0 --http
+<span class="c"># http://127.0.0.1:8787/mcp</span></pre>
+            <p>Every request on 2026-07-28 needs an <code>MCP-Protocol-Version</code> header, an <code>Mcp-Method</code> header, an <code>Mcp-Name</code> header for <code>tools/call</code>, and <code>_meta</code> with the protocol version and the client's capabilities. Leave one out and the server tells you which.</p>
+
+            <h2>Links</h2>
+            <ul>
+                <li><a href="https://github.com/Wolfe-Jam/mcp-better/blob/main/docs/MRTR-CONFIRM-ECHO.md">mcp-better: Mid-call confirmation (confirm_echo)</a></li>
+                <li><a href="https://github.com/Wolfe-Jam/mcp-better/pull/19">mcp-better #19: requestState expires after 5 minutes</a> · <a href="https://github.com/Wolfe-Jam/mcp-better/pull/20">#20: a changed message is refused</a></li>
+                <li><a href="https://github.com/Wolfe-Jam/mcp-better/blob/main/CHANGELOG.md">mcp-better CHANGELOG (0.8.0)</a></li>
+                <li><a href="https://modelcontextprotocol.io/specification/2026-07-28/basic/patterns/mrtr">MCP 2026-07-28: Multi Round-Trip Requests</a></li>
+                <li><a href="https://docs.rs/rmcp/3.10.0/rmcp/model/struct.RequestStateCodec.html">rmcp: RequestStateCodec</a></li>
+            </ul>
+
+            <p class="checked">Captured from mcp-better 0.7.0 and 0.8.0 over Streamable HTTP, protocol 2026-07-28, on November 27, 2026.</p>
+        </article>
+
+        <p class="more">More about me and my work: <a href="/info">wolfejam.dev/info</a></p>
+
+        <p class="credit">— Drafted by Claude · Edited by James Wolfe</p>
+    </main>
+    <script>
+        // WolfejamGizmo: same key as the home page, so the choice carries across the site.
+        (function () {
+            const html = document.documentElement;
+            const toggle = document.getElementById('themeToggle');
+            const gradient = document.getElementById('themeGradient');
+            const show = (t) => gradient.classList.toggle('wolfejam-gizmo__gradient--dark', t === 'dark');
+            show(html.getAttribute('data-theme'));
+            toggle.addEventListener('click', () => {
+                const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+                html.setAttribute('data-theme', next);
+                try { localStorage.setItem('theme', next); } catch (e) {}
+                show(next);
+            });
+        })();
+    </script>
+</body>
+</html>
