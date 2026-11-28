@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>mcp-context-card 1.10: a project's context, memory and identity over MCP — WOLFE ∞ JAMES</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="apple-touch-icon" href="/favicon.png">
+    <meta name="description" content="An MCP server that serves a project's AGENTS.md, memory and identity to any MCP client, and shows them as a business card. New in 1.10: AI Catalog v0.9 ids, and discovery that names only a host the operator vouches for.">
+    <meta name="author" content="James | wolfejam">
+    <link rel="canonical" href="https://wolfejam.dev/blog/mcp-context-card">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://wolfejam.dev/blog/mcp-context-card">
+    <meta property="og:title" content="mcp-context-card 1.10: a project's context, memory and identity over MCP — WOLFE ∞ JAMES">
+    <meta property="og:description" content="An MCP server that serves a project's AGENTS.md, memory and identity to any MCP client, and shows them as a business card. New in 1.10: AI Catalog v0.9 ids, and discovery that names only a host the operator vouches for.">
+    <meta property="og:image" content="https://wolfejam.dev/blog/og-mcp-context-card.png">
+    <meta name="twitter:image" content="https://wolfejam.dev/blog/og-mcp-context-card.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <script>
+        // Same theme key as the home page, set before paint.
+        try { document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light'); } catch (e) {}
+    </script>
+    <style>
+        :root {
+            --bg-primary: #fefcf8;
+            --bg-secondary: #f9f6f1;
+            --text-primary: #1a1a1a;
+            --text-secondary: #4a4a4a;
+            --text-muted: #7a7a7a;
+            --accent: #E74C3C;
+            --accent-hover: #C0392B;
+            --faf: #FF6B35;
+            --faf-hover: #e55a2b;
+            --service: #E74C3C;
+            --service-hover: #C0392B;
+            --border: #e5e5e5;
+            --code-bg: #f5f5f5;
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #0f0f0f;
+            --bg-secondary: #1a1a1a;
+            --text-primary: #f5f5f5;
+            --text-secondary: #d0d0d0;
+            --text-muted: #a0a0a0;
+            --accent: #E74C3C;
+            --accent-hover: #ff7b6e;
+            --faf: #FF6B35;
+            --faf-hover: #ff8a5c;
+            --service: #E74C3C;
+            --service-hover: #ff7b6e;
+            --border: #333333;
+            --code-bg: #262626;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background: var(--bg-primary);
+        }
+
+        .container { max-width: 760px; margin: 0 auto; padding: 0 24px; }
+
+        header { padding: 24px 0; border-bottom: 1px solid var(--border); background: var(--bg-primary); position: sticky; top: 0; z-index: 100; }
+        header .container { max-width: 1200px; }
+        nav { display: flex; justify-content: space-between; align-items: center; }
+        .logo, .logo:hover { font-size: 24px; font-weight: 700; color: var(--text-primary); text-decoration: none; }
+        .logo .car { font-size: 34px; line-height: 1; vertical-align: -0.12em; }
+        .nav-right { display: flex; align-items: center; gap: 12px; }
+        .nav-sep { color: var(--text-muted); font-size: 15px; }
+        .nav-link { color: var(--text-primary); font-weight: 600; font-size: 15px; text-decoration: none; }
+        .nav-link:hover, .nav-link:focus-visible { text-decoration: underline; text-underline-offset: 6px; }
+        .nav-link.active { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 6px; }
+        .nav-worth-it { font-size: 26px; line-height: 1; text-decoration: none; }
+        a.faf { color: var(--faf); }
+        a.faf:hover { color: var(--faf-hover); }
+        main { padding: 48px 0 64px; }
+        h1 { font-size: 2rem; letter-spacing: 0.02em; }
+        .intro { color: var(--text-secondary); margin-top: 8px; }
+
+        .week { margin-top: 48px; padding-top: 32px; border-top: 1px solid var(--border); }
+        .week h2 { font-size: 1.35rem; }
+        .week h2 a { color: inherit; text-decoration: none; }
+        .week .range { color: var(--text-muted); font-size: 0.95rem; }
+        .week h3 { font-size: 1rem; margin: 24px 0 8px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-secondary); }
+        .week ul { list-style: none; }
+        .week li { padding: 10px 0 10px 16px; border-left: 3px solid var(--accent); margin-bottom: 10px; background: var(--bg-secondary); border-radius: 0 6px 6px 0; padding-right: 12px; }
+        .week li strong { color: var(--text-primary); }
+        .week li .sub { display: block; color: var(--text-secondary); font-size: 0.95rem; margin-top: 2px; }
+
+        a { color: var(--text-primary); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+        a:hover { color: var(--text-secondary); }
+        a.service { color: var(--service); font-weight: 600; }
+        a.service:hover { color: var(--service-hover); }
+        code { background: var(--code-bg); color: var(--text-primary); padding: 1px 6px; border-radius: 4px; font-size: 0.9em; overflow-wrap: anywhere; }
+
+        .door { margin-top: 56px; padding: 20px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-secondary); }
+        .door p { color: var(--text-secondary); }
+        .more { margin-top: 48px; color: var(--text-secondary); }
+        .share { margin-top: 32px; color: var(--text-secondary); font-size: 0.95rem; }
+        .share a, .share button { color: var(--accent); text-decoration: none; background: none; border: 0; padding: 0; font: inherit; cursor: pointer; }
+        .share a:hover, .share button:hover { color: var(--accent-hover); text-decoration: underline; }
+        .share .sep { color: var(--text-muted); margin: 0 6px; }
+        .share .native { display: none; }
+        .credit { margin-top: 24px; color: var(--text-muted); font-size: 0.85rem; }
+    
+        .post-list { list-style: none; margin-top: 32px; }
+        .post-list li { padding: 20px 0; border-top: 1px solid var(--border); }
+        .post-list a.title { font-size: 1.25rem; font-weight: 700; color: var(--text-primary); text-decoration: none; }
+        .post-list a.title:hover { color: var(--accent); }
+        .post-list .meta, .byline { color: var(--text-muted); font-size: 0.9rem; }
+        .post-list .summary { color: var(--text-secondary); margin-top: 4px; }
+
+        article h1 { font-size: 2.1rem; line-height: 1.2; }
+        article .subtitle { color: var(--text-secondary); font-size: 1.15rem; margin-top: 8px; }
+        article .byline { margin-top: 12px; }
+        article h2 { font-size: 1.3rem; margin: 40px 0 12px; }
+        article p { margin: 0 0 16px; color: var(--text-primary); }
+        article ul { margin: 0 0 16px 22px; }
+        article li { margin-bottom: 8px; }
+        article blockquote { margin: 16px 0; padding: 12px 18px; border-left: 3px solid var(--accent); background: var(--bg-secondary); border-radius: 0 6px 6px 0; color: var(--text-secondary); font-style: italic; }
+        article .closer { font-size: 1.15rem; font-weight: 700; margin-top: 8px; }
+        main.post { padding-top: 80px; }
+        article h3 { font-size: 1rem; margin: 20px 0 8px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-secondary); }
+        article .checked { color: var(--text-muted); font-size: 0.9rem; margin-top: 32px; }
+
+        /* WolfejamGizmo - Signature half-moon theme toggle */
+        .wolfejam-gizmo {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 48px;
+            height: 48px;
+            padding: 0;
+            background: transparent;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            outline: none;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+
+        .wolfejam-gizmo__gradient {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #FFF 50%, #121212 50%);
+            transition: transform 0.3s ease;
+            border-radius: 50%;
+        }
+
+        .wolfejam-gizmo__gradient--dark {
+            transform: rotate(180deg);
+        }
+
+        .wolfejam-gizmo:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 16px rgba(0, 255, 255, 0.3);
+        }
+
+        .wolfejam-gizmo:active {
+            transform: scale(0.95);
+        }
+
+        .wolfejam-gizmo:focus {
+            outline: 2px solid #00FFFF;
+            outline-offset: 2px;
+        }
+
+        .wolfejam-gizmo:focus:not(:focus-visible) {
+            outline: none;
+        }
+
+        .wolfejam-gizmo__tooltip {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-bottom: 8px;
+            background: #fffccc;
+            color: #000;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            white-space: nowrap;
+            pointer-events: none;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .wolfejam-gizmo:hover .wolfejam-gizmo__tooltip {
+            opacity: 1;
+        }
+
+        .wolfejam-gizmo__tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+            border-top: 4px solid #fffccc;
+        }
+        @media (max-width: 520px) {
+            header { padding: 16px 0; }
+            .logo { font-size: 17px; white-space: nowrap; }
+            .logo .car { font-size: 24px; }
+            .nav-right { gap: 9px; }
+            .nav-link, .nav-shipped { font-size: 14px; }
+            .nav-sep { display: none; }
+            .nav-worth-it { font-size: 22px; }
+        }
+        .cm { margin: 20px 0; padding: 10px 16px; border-left: 2px solid var(--border); font-family: "SF Mono", Menlo, Monaco, monospace; font-size: 0.86rem; line-height: 1.55; color: var(--text-secondary); }
+        .cm .ln { display: block; position: relative; padding-left: 3.2ch; }
+        .cm .ln::before { content: "//"; position: absolute; left: 0; }
+        .cm .ln.cont { padding-left: calc(3.2ch + var(--lab, 0ch)); }
+        .cm b { color: var(--text-primary); font-weight: 700; }
+        .cm.gotcha { border-left-color: var(--faf); }
+        .cm.gotcha b { color: var(--faf); }
+        .cm.tried { border-left-style: dashed; }
+        pre.code { margin: 16px 0; padding: 16px 18px; background: var(--code-bg); border-radius: 8px; overflow-x: auto; font-family: "SF Mono", Menlo, Monaco, monospace; font-size: 0.86rem; line-height: 1.55; }
+        pre.code .c { color: var(--text-muted); }
+        pre.code .hl { background: rgba(255, 107, 53, 0.18); border-radius: 3px; padding: 1px 2px; }
+        .file { font-family: "SF Mono", Menlo, monospace; font-size: 0.78rem; color: var(--text-muted); margin: 20px 0 -10px; }
+        @media (max-width: 480px) { pre.code, .cm { font-size: 0.8rem; } }
+        .hero { margin: 24px 0 8px; border-radius: 8px; overflow: hidden; background: #1a1a1a; /* media frame */ }
+        .hero video { display: block; width: 100%; height: auto; }
+    </style>
+</head>
+<body>
+    <!-- WolfejamGizmo - Signature theme toggle (same as the home page) -->
+    <button class="wolfejam-gizmo" id="themeToggle" aria-label="Toggle theme">
+        <div class="wolfejam-gizmo__gradient" id="themeGradient"></div>
+        <div class="wolfejam-gizmo__tooltip" id="themeTooltip">WolfeJam's Gizmo</div>
+    </button>
+    <header>
+        <nav class="container">
+            <a href="/" class="logo"><span class="car">🏎️</span>✨ wolfejam.dev</a>
+            <div class="nav-right">
+                <a href="/blog" class="nav-link active" aria-current="page">Blog</a>
+                <span class="nav-sep" aria-hidden="true">|</span>
+                <a href="/shipped" class="nav-link">Shipped</a>
+                <span class="nav-sep" aria-hidden="true">|</span>
+                <a href="/info" class="nav-link">Info</a>
+                <span class="nav-sep" aria-hidden="true">|</span>
+                <a href="/#worth-it" class="nav-worth-it" aria-label="Worth-It Service">🧰</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container post">
+        <article>
+            <h1>mcp-context-card 1.10</h1>
+            <p class="subtitle">A project's AGENTS.md, memory and identity over MCP, and the card that shows them</p>
+            <p class="byline">Release · Nov 28, 2026 · <a href="/blog">Blog</a></p>
+
+            <div class="hero">
+                <video src="/blog/mcp-context-card.mp4" poster="/blog/og-mcp-context-card.png" autoplay muted loop playsinline aria-label="The mcp-context-card business card in light and dark, flipping in turn to show its About side, then the light card's About, Context and Memory tabs"></video>
+            </div>
+
+            <p><code>AGENTS.md</code> is a file in a repository. An agent that reaches a project over MCP has no working directory, so it has no way to find that file. mcp-context-card is an MCP server that gives the agent three things: the project's <code>AGENTS.md</code>, facts it remembers across sessions, and an identity. Clients can discover all three through the Server Card and an AI Catalog, and people can read them as a business card.</p>
+            <p>It's MIT, on npm and in the MCP Registry as <code>io.github.Wolfe-Jam/mcp-context-card</code>. Run it as the only MCP server in a host, or alongside the ones you already have.</p>
+
+            <h2>What it does</h2>
+            <ul>
+                <li><strong>Context.</strong> <code>read_agents_md</code> serves <code>AGENTS.md</code> whole or one section at a time, so a client can pull <code>## Test</code> without reading the whole file. <code>author_agents_md</code> drafts one from the repo's facts if you don't have one.</li>
+                <li><strong>Memory.</strong> <code>remember</code>, <code>recall</code> and <code>forget</code> keep facts in a file, so they survive a restart.</li>
+                <li><strong>Identity.</strong> <code>whoami</code> reads the project's <code>.fafa</code>, falling back to <code>package.json</code>.</li>
+                <li><strong>The card.</strong> The same sources, drawn as a business card: the front has the name, the kind and version, and a one-liner. Flip it for About, Context, Memory and Discovery. It comes in light or dark. In a host that supports MCP Apps, the card is drawn in the chat; everywhere else you get it as Markdown.</li>
+                <li><strong>Discovery.</strong> A Server Card at <code>/mcp/server-card</code> with one <code>_meta</code> key per concern, and an AI Catalog at <code>/.well-known/ai-catalog.json</code> listing the card and the files beside it.</li>
+            </ul>
+            <p>That's 10 tools, all annotated (7 read-only), and one prompt, <code>show</code>.</p>
+
+            <h2>New in 1.10</h2>
+            <h3>AI Catalog v0.9 ids</h3>
+            <p>Each catalog entry is named <code>urn:air:{domain}:{name}-{kind}</code>, for example <code>urn:air:example.com:my-project-context</code>. The domain comes from the project's <code>.fafa</code>. One segment after the domain can't be read the wrong way round: v0.9 reads it as a name with no kind. If you published catalogs from an earlier version of this server, set <code>MCP_CONTEXT_CARD_FORMER_IDS=1</code> and each entry records its old id.</p>
+            <h3>Only a host you vouch for</h3>
+            <p>Over HTTP, the card and the catalog include the server's own address. Up to 1.10.1 that address came from the request, and any client can send a <code>Host</code> or <code>X-Forwarded-Host</code> header. Discovery responses are cached as public for an hour, so one request could put someone else's domain in a cached catalog.</p>
+            <p>From 1.10.2, the server names only a host it can vouch for: loopback on a local bind, or a name you list in <code>MCP_CONTEXT_CARD_ALLOWED_HOSTS</code>. For any other host, the card has no <code>remotes</code> and the catalog uses relative URLs, the same as the static file in the repo. A proxy's <code>X-Forwarded-Host</code> counts only for a listed name, and responses carry <code>Vary</code> on the headers the address comes from.</p>
+            <div class="cm gotcha"><span class="ln"><b>UPGRADE:</b> a deploy reached by a public name lists it in MCP_CONTEXT_CARD_ALLOWED_HOSTS.</span><span class="ln">Without it, the card and catalog name no host. The server says so at start.</span></div>
+            <h3>Every catalog URL resolves</h3>
+            <p>The catalog lists only files the server actually serves: no <code>AGENTS.md</code>, no context entry. Relative URLs are written relative to the catalog itself (<code>../AGENTS.md</code>), so they resolve both when served and in a repo browser.</p>
+
+            <h2>Try it</h2>
+            <p class="file">terminal, in your project folder</p>
+<pre class="code"><span class="c"># your project's card, in the browser</span>
+npx mcp-context-card card
+
+<span class="c"># Claude Code; then: show context card</span>
+claude mcp add contextcard \
+  -- npx -y mcp-context-card</pre>
+            <p>Most hosts take the same command in their <code>mcpServers</code> config. The <a href="https://github.com/Wolfe-Jam/mcp-context-card#wire-it-into-a-host">README</a> has goose, Cursor and the HTTP setup.</p>
+
+            <h2>How it was checked</h2>
+            <p>1.10.2 had six rounds of independent review before release, each on the fixes from the round before. Every round found something, and the most useful findings were in my own fixes. One example: the second round changed the rule to "a forwarded host that isn't allowed takes its forwarded protocol with it". The third round showed that this let any client downgrade a listed deploy to <code>http</code>, just by adding a bogus header.</p>
+            <div class="cm tried" style="--lab:7ch"><span class="ln"><b>TRIED:</b> a fix from a review is new code. It gets reviewed too.</span></div>
+            <p>Each code fix came with a test that fails without it: 281 tests in all, on Linux, macOS and Windows with Node 22 and 24. Before the publish, the packed tarball was installed cold and run over stdio and HTTP. After it, a stranger's install from npm checked the published version.</p>
+
+            <h2>Links</h2>
+            <ul>
+                <li><a href="https://github.com/Wolfe-Jam/mcp-context-card">github.com/Wolfe-Jam/mcp-context-card</a> (MIT)</li>
+                <li><a href="https://www.npmjs.com/package/mcp-context-card">npmjs.com/package/mcp-context-card</a></li>
+                <li><a href="https://github.com/Wolfe-Jam/mcp-context-card/releases/tag/v1.10.2">v1.10.2 release notes</a></li>
+                <li><a href="https://wolfe-jam.github.io/mcp-context-card/">This repo's own card, live</a></li>
+                <li><a href="https://github.com/Agent-Card/ai-catalog">AI Catalog</a> · <a href="https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2127">Server Card (SEP-2127)</a> · <a href="https://agents.md">AGENTS.md</a></li>
+            </ul>
+
+            <p class="checked">Checked against mcp-context-card 1.10.2 (npm, MCP Registry), on November 28, 2026.</p>
+        </article>
+
+        <p class="share" data-url="https://wolfejam.dev/blog/mcp-context-card" data-title="mcp-context-card 1.10: a project's context, memory and identity over MCP"><span class="lab">Share: </span><span class="links"><a href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fwolfejam.dev%2Fblog%2Fmcp-context-card" target="_blank" rel="noopener">LinkedIn</a><span class="sep">·</span><a href="https://twitter.com/intent/tweet?text=mcp-context-card%201.10%3A%20a%20project%27s%20context%2C%20memory%20and%20identity%20over%20MCP&amp;url=https%3A%2F%2Fwolfejam.dev%2Fblog%2Fmcp-context-card" target="_blank" rel="noopener">X</a><span class="sep">·</span><button type="button" class="copy">Copy link</button></span><button type="button" class="native">Share this post</button></p>
+
+        <p class="more">More about me and my work: <a href="/info">wolfejam.dev/info</a></p>
+
+        <p class="credit">— Drafted by Claude · Edited by James Wolfe</p>
+    </main>
+    <script>
+    (function () {
+        var row = document.querySelector('.share'); if (!row) return;
+        var url = row.dataset.url, title = row.dataset.title;
+        var copy = row.querySelector('.copy');
+        copy.addEventListener('click', function () {
+            var done = function () { copy.textContent = 'Copied'; setTimeout(function () { copy.textContent = 'Copy link'; }, 1600); };
+            if (navigator.clipboard) navigator.clipboard.writeText(url).then(done, function () { prompt('Copy this link:', url); });
+            else prompt('Copy this link:', url);
+        });
+        if (navigator.share && window.matchMedia('(pointer: coarse)').matches) {
+            row.querySelector('.links').style.display = 'none'; row.querySelector('.lab').style.display = 'none';
+            var b = row.querySelector('.native'); b.style.display = 'inline';
+            b.addEventListener('click', function () { navigator.share({ title: title, url: url }).catch(function () {}); });
+        }
+    })();
+    </script>
+    <script>
+        // WolfejamGizmo: same key as the home page, so the choice carries across the site.
+        (function () {
+            const html = document.documentElement;
+            const toggle = document.getElementById('themeToggle');
+            const gradient = document.getElementById('themeGradient');
+            const show = (t) => gradient.classList.toggle('wolfejam-gizmo__gradient--dark', t === 'dark');
+            show(html.getAttribute('data-theme'));
+            toggle.addEventListener('click', () => {
+                const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+                html.setAttribute('data-theme', next);
+                try { localStorage.setItem('theme', next); } catch (e) {}
+                show(next);
+            });
+        })();
+    </script>
+</body>
+</html>
